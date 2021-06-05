@@ -28,6 +28,22 @@
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Fire",
+                    "type": "Value",
+                    "id": "c0c3223d-ae1e-4e9e-afce-a80ee8bb6003",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "TurnCannon",
+                    "type": "Value",
+                    "id": "0de2b828-86bc-40c5-ad32-72bf98597977",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -184,6 +200,28 @@
                     "action": "Foresail",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "11bca295-897e-4f18-9e63-89b751050c19",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7a236c42-0094-4343-83e8-10e6fa48c38c",
+                    "path": "<Gamepad>/rightStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TurnCannon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

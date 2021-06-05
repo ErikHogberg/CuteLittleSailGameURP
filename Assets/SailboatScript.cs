@@ -7,6 +7,9 @@ public class SailboatScript : MonoBehaviour {
 
 	public GameObject GravityCenter;
 	public float GravityAmount = 9.81f;
+	public float ThrustAmount = 1f;
+	public float RotateSpeed = 1f;
+
 	[Space]
 	public GameObject Rudder;
 	public GameObject Mainsail;
@@ -38,6 +41,8 @@ public class SailboatScript : MonoBehaviour {
 
 	Rigidbody boatRb;
 
+	float angleBuffer = 0;
+
 	void Start() {
 		foresailRot = Foresail.transform.localRotation;
 		boatRb = GetComponent<Rigidbody>();
@@ -59,12 +64,32 @@ public class SailboatScript : MonoBehaviour {
 		Foresail.transform.localRotation = Quaternion.AngleAxis(foresailBuffer * ForesailAngleMul, foresailRot * Vector3.forward) * foresailRot;
 
 		Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
-		if (Rotate)
-			boatRb.rotation=
-                Quaternion.FromToRotation(Vector3.up, gravityDir)
-                // TODO: dont enforce rotation on axis between boat and gravity center
-             ;
-		boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Force);
+		if (Rotate) {
+
+			// boatRb.rotation =
+			// 	Quaternion.FromToRotation(Vector3.up, gravityDir)
+			//  ;
+			// Quaternion facingRot = Quaternion.AngleAxis(angleBuffer, gravityDir);
+
+            // IDEA: unlock rb y local rotation, use add force instead
+			angleBuffer += rudderValue * RotateSpeed * Time.deltaTime;
+
+            // FIXME: gimbal locks
+			boatRb.rotation =
+			Quaternion.identity
+			* Quaternion.FromToRotation(Vector3.up, gravityDir)
+			* Quaternion.AngleAxis(angleBuffer, Vector3.up)
+			;
+
+			// boatRb.rotation *= Quaternion.FromToRotation(transform.up, gravityDir);
+
+		}
+
+		boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Acceleration); // gravity
+        
+        // TODO: reduce drift when turning
+        // IDEA: redirect velocity to forward partially instead
+		boatRb.AddForce(transform.forward * ThrustAmount * mainsailValue, ForceMode.Force); // thrust
 
 	}
 
