@@ -1,5 +1,5 @@
-CuteLittleSailGameURP
-=====================
+Cute Little Sail Game URP
+=========================
 PvP sailing game
 ----------------
 
