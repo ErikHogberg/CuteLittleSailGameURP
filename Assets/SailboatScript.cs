@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 public class SailboatScript : MonoBehaviour {
 
+	public GameObject GravityCenter;
+	public float GravityAmount = 9.81f;
+	[Space]
 	public GameObject Rudder;
 	public GameObject Mainsail;
 	public GameObject Foresail;
@@ -14,45 +17,77 @@ public class SailboatScript : MonoBehaviour {
 	public float RudderAngleMul = 1;
 	[Space]
 	public float MainsailSpeed = 1;
+	public float MainsailBufferSpeed = 1;
 	public float MainsailAngleMul = 1;
 	[Space]
 	public float ForesailSpeed = 1;
+	public float ForesailBufferSpeed = 1;
 	public float ForesailAngleMul = 1;
 
-	float rudder = 0;
+	[Space]
+	public bool Rotate = false;
+
+	float rudderValue = 0;
 	float rudderBuffer = 0;
-	float mainsail = 0;
+	float mainsailValue = 0;
 	float mainsailBuffer = 0;
-	float foresail = 0;
+	float foresailValue = 0;
 	float foresailBuffer = 0;
 
-	Vector3 foresailAxis;
+	Quaternion foresailRot;
+
+	Rigidbody boatRb;
 
 	void Start() {
-		foresailAxis = Foresail.transform.localRotation * Vector3.up;
+		foresailRot = Foresail.transform.localRotation;
+		boatRb = GetComponent<Rigidbody>();
 	}
 
 	void Update() {
-		rudderBuffer = Mathf.MoveTowards(rudderBuffer, rudder, RudderSpeed * Time.deltaTime);
-		mainsailBuffer = Mathf.MoveTowards(mainsailBuffer, mainsail, MainsailSpeed * Time.deltaTime);
-		foresailBuffer = Mathf.MoveTowards(foresailBuffer, foresail, ForesailSpeed * Time.deltaTime);
+		rudderBuffer = Mathf.MoveTowards(rudderBuffer, rudderValue, RudderSpeed * Time.deltaTime);
+
+		// mainsailBuffer = Mathf.MoveTowards(mainsailBuffer, mainsail, MainsailBufferSpeed * Time.deltaTime);
+		mainsailBuffer += mainsailValue * MainsailBufferSpeed * Time.deltaTime;
+		mainsailBuffer = Mathf.Clamp01(mainsailBuffer);
+
+		// foresailBuffer = Mathf.MoveTowards(foresailBuffer, foresail, ForesailBufferSpeed * Time.deltaTime);
+		foresailBuffer += foresailValue * ForesailBufferSpeed * Time.deltaTime;
+		foresailBuffer = Mathf.Clamp01(foresailBuffer);
 
 		Rudder.transform.localRotation = Quaternion.AngleAxis(rudderBuffer * RudderAngleMul, Vector3.up);
 		Mainsail.transform.localRotation = Quaternion.AngleAxis(mainsailBuffer * MainsailAngleMul, Vector3.forward);
-		Foresail.transform.localRotation = Quaternion.AngleAxis(foresailBuffer * ForesailAngleMul, foresailAxis);
+		Foresail.transform.localRotation = Quaternion.AngleAxis(foresailBuffer * ForesailAngleMul, foresailRot * Vector3.forward) * foresailRot;
+
+		Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
+		if (Rotate)
+			boatRb.rotation=
+                Quaternion.FromToRotation(Vector3.up, gravityDir)
+                // TODO: dont enforce rotation on axis between boat and gravity center
+             ;
+		boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Force);
 
 	}
 
 	public void OnRudder(InputValue value) {
-		rudder = value.Get<float>();
+		rudderValue = value.Get<float>();
 	}
 
 	public void OnMainsail(InputValue value) {
-		mainsail = value.Get<float>();
+		mainsailValue = value.Get<float>();
 	}
 
 	public void OnForesail(InputValue value) {
-		foresail = value.Get<float>();
+		foresailValue = value.Get<float>();
+	}
+
+	public void SetRudder(float value) {
+		rudderValue = value;
+	}
+	public void SetMainsail(float value) {
+		mainsailValue = value;
+	}
+	public void SetForesail(float value) {
+		foresailValue = value;
 	}
 
 }
