@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,7 +9,10 @@ public class SailboatScript : MonoBehaviour {
 	public GameObject GravityCenter;
 	public float GravityAmount = 9.81f;
 	public float ThrustAmount = 1f;
-	public float RotateSpeed = 1f;
+
+	[Range(0, 1)]
+	public float FrontRearForceRatio = .5f;
+	public float VelocityCap = 1f;
 
 	[Space]
 	public GameObject Rudder;
@@ -43,9 +47,16 @@ public class SailboatScript : MonoBehaviour {
 
 	float angleBuffer = 0;
 
+	[Space]
+	public Vector3 WeightCenter;
+
+	public Vector3 FrontForcePoint;
+	public Vector3 RearForcePoint;
+
 	void Start() {
 		foresailRot = Foresail.transform.localRotation;
 		boatRb = GetComponent<Rigidbody>();
+		boatRb.centerOfMass = WeightCenter;
 	}
 
 	void Update() {
@@ -59,37 +70,24 @@ public class SailboatScript : MonoBehaviour {
 		foresailBuffer += foresailValue * ForesailBufferSpeed * Time.deltaTime;
 		foresailBuffer = Mathf.Clamp01(foresailBuffer);
 
-		Rudder.transform.localRotation = Quaternion.AngleAxis(rudderBuffer * RudderAngleMul, Vector3.up);
+		Rudder.transform.localRotation = Quaternion.AngleAxis(rudderBuffer * RudderAngleMul, Vector3.down);
 		Mainsail.transform.localRotation = Quaternion.AngleAxis(mainsailBuffer * MainsailAngleMul, Vector3.forward);
 		Foresail.transform.localRotation = Quaternion.AngleAxis(foresailBuffer * ForesailAngleMul, foresailRot * Vector3.forward) * foresailRot;
 
 		Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
-		if (Rotate) {
-
-			// boatRb.rotation =
-			// 	Quaternion.FromToRotation(Vector3.up, gravityDir)
-			//  ;
-			// Quaternion facingRot = Quaternion.AngleAxis(angleBuffer, gravityDir);
-
-            // IDEA: unlock rb y local rotation, use add force instead
-			angleBuffer += rudderValue * RotateSpeed * Time.deltaTime;
-
-            // FIXME: gimbal locks
-			boatRb.rotation =
-			Quaternion.identity
-			* Quaternion.FromToRotation(Vector3.up, gravityDir)
-			* Quaternion.AngleAxis(angleBuffer, Vector3.up)
-			;
-
-			// boatRb.rotation *= Quaternion.FromToRotation(transform.up, gravityDir);
-
-		}
 
 		boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Acceleration); // gravity
-        
-        // TODO: reduce drift when turning
-        // IDEA: redirect velocity to forward partially instead
-		boatRb.AddForce(transform.forward * ThrustAmount * mainsailValue, ForceMode.Force); // thrust
+
+		// thrust
+		// TODO: calculate forward speed based on mainsail angle compared to wind
+		// TODO: wind direction
+		float forwardSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
+		boatRb.AddForceAtPosition(transform.forward * forwardSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
+		boatRb.AddForceAtPosition(Rudder.transform.forward * forwardSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
+
+		if (boatRb.velocity.sqrMagnitude > VelocityCap * VelocityCap) {
+			boatRb.velocity = boatRb.velocity.normalized * VelocityCap;
+		}
 
 	}
 

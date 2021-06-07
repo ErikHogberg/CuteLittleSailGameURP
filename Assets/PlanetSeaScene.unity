@@ -146,12 +146,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133052833}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0148000335, z: -0.06577766}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.4800034, z: -6.5777664}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1836647275}
   - {fileID: 814106491}
+  - {fileID: 1836647275}
   m_Father: {fileID: 1538905252}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -232,8 +232,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 147466951}
   m_LocalRotation: {x: 0.20766747, y: -0.4686499, z: 0.09490321, w: 0.8533668}
-  m_LocalPosition: {x: 0.3291902, y: 0.2719528, z: -0.19514243}
-  m_LocalScale: {x: 0.009999999, y: 0.010000001, z: 0.009999999}
+  m_LocalPosition: {x: 32.91902, y: 27.195282, z: -19.514244}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1538905252}
   m_RootOrder: 2
@@ -682,11 +682,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 814106490}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000035762784}
-  m_LocalPosition: {x: 0, y: 0.00027000438, z: 0.006500013}
-  m_LocalScale: {x: 0.0058125523, y: 0.0027631759, z: 0.03957229}
+  m_LocalPosition: {x: 0, y: 0.027000427, z: 0.6500015}
+  m_LocalScale: {x: 0.58125526, y: 0.2763176, z: 3.9572291}
   m_Children: []
   m_Father: {fileID: 133052834}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &814106493
 MeshRenderer:
@@ -1312,7 +1312,7 @@ Transform:
   m_GameObject: {fileID: 1538905251}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 148.4, y: 108.2, z: 111.5}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1996892093}
   - {fileID: 133052834}
@@ -1379,9 +1379,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GravityCenter: {fileID: 1089328303}
-  GravityAmount: -9.81
-  ThrustAmount: 10
-  RotateSpeed: 100
+  GravityAmount: -98.1
+  ThrustAmount: 50
+  FrontRearForceRatio: 0.5
+  VelocityCap: 45
   Rudder: {fileID: 133052833}
   Mainsail: {fileID: 233616901}
   Foresail: {fileID: 925578774}
@@ -1394,6 +1395,9 @@ MonoBehaviour:
   ForesailBufferSpeed: 3
   ForesailAngleMul: 40
   Rotate: 1
+  WeightCenter: {x: 0, y: -5, z: 0}
+  FrontForcePoint: {x: 0, y: -1.6244354, z: 8.006203}
+  RearForcePoint: {x: 0, y: -1.2721176, z: -6.364998}
 --- !u!65 &1538905255
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1405,8 +1409,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.063165046, y: 0.10773359, z: 0.19882469}
-  m_Center: {x: 0, y: 0.051358156, z: 0.009507789}
+  m_Size: {x: 6.316505, y: 11.171231, z: 19.88247}
+  m_Center: {x: 0, y: 4.9368806, z: 0.009508133}
 --- !u!54 &1538905256
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1416,12 +1420,12 @@ Rigidbody:
   m_GameObject: {fileID: 1538905251}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 1
+  m_AngularDrag: 5
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 1
 --- !u!1 &1677039712
 GameObject:
@@ -2265,11 +2269,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836647274}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000035762784}
-  m_LocalPosition: {x: 0, y: -0.014000015, z: -0.010299988}
-  m_LocalScale: {x: 0.0037551215, y: 0.027611105, z: 0.02444753}
+  m_LocalPosition: {x: 0, y: -1.4000015, z: -1.0299988}
+  m_LocalScale: {x: 0.37551215, y: 2.7611105, z: 2.4447532}
   m_Children: []
   m_Father: {fileID: 133052834}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1836647277
 MeshRenderer:
@@ -2591,8 +2595,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1996892092}
   m_LocalRotation: {x: 0.00000027567145, y: 0.70710695, z: 0.70710665, w: -0.00000023096797}
-  m_LocalPosition: {x: -0.00000015258789, y: 0, z: 0.021422347}
-  m_LocalScale: {x: 1.4716882, y: 1.4716879, z: 1.4716878}
+  m_LocalPosition: {x: -0.000015258789, y: 0, z: 2.1422348}
+  m_LocalScale: {x: 147.16881, y: 147.1688, z: 147.16878}
   m_Children:
   - {fileID: 577180798}
   - {fileID: 1684480900}
