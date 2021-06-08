@@ -21,6 +21,11 @@ public class SailboatScript : MonoBehaviour {
 	public GameObject Mainsail;
 	public GameObject Foresail;
 	public GameObject Cannon;
+	public GameObject CannonBallSpawnPoint;
+	public GameObject CannonBallObject;
+
+	// TODO: draw projectile arc
+	// IDEA: only on fire button down, fire on release?
 
 	[Space]
 	public float RudderSpeed = 1;
@@ -35,7 +40,7 @@ public class SailboatScript : MonoBehaviour {
 	public float ForesailAngleMul = 1;
 
 	[Space]
-	public bool Rotate = false;
+	public float CannonBallVelocity = 1f;
 
 	float rudderValue = 0;
 	float rudderBuffer = 0;
@@ -92,13 +97,19 @@ public class SailboatScript : MonoBehaviour {
 		Mainsail.transform.localRotation = Quaternion.AngleAxis(mainsailBuffer * MainsailAngleMul, Vector3.forward);
 		Foresail.transform.localRotation = Quaternion.AngleAxis(foresailBuffer * ForesailAngleMul, foresailRot * Vector3.forward) * foresailRot;
 
+		// TODO: rotate cannon
+		// Cannon.transform.localRotation = Quaternion.AngleAxis(turnCannonValue, Vector3.up);
+	}
+
+
+	private void FixedUpdate() {
+
 		Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
 
 		boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Acceleration); // gravity
 
 		// thrust
 		// TODO: calculate forward speed based on mainsail angle compared to wind
-		// TODO: wind direction
 		float forwardSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
 		boatRb.AddForceAtPosition(transform.forward * forwardSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
 		boatRb.AddForceAtPosition(Rudder.transform.forward * forwardSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
@@ -107,7 +118,6 @@ public class SailboatScript : MonoBehaviour {
 			boatRb.velocity = boatRb.velocity.normalized * VelocityCap;
 		}
 
-		// TODO: calculate wind dir relative to boat world facing
 		// Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
 		float boatWindAngle = Vector3.SignedAngle(transform.forward, WindDir, transform.up);
 		WindDirEvent.Invoke(new Vector3(0, 0, boatWindAngle));
@@ -160,7 +170,19 @@ public class SailboatScript : MonoBehaviour {
 	}
 
 	public void Fire() {
-		// TODO: spawn projectile
+
+		if (!Cannon || !CannonBallObject || !CannonBallSpawnPoint) {
+			Debug.LogWarning("Cannon object(s) missing");
+			return;
+		}
+
+		// IDEA: projectile buffer instead of creating and destroying every projectile
+		GameObject cannonBall = Instantiate(CannonBallObject, CannonBallSpawnPoint.transform.position, Cannon.transform.rotation);
+		if (cannonBall.TryGetComponent<CannonBallScript>(out CannonBallScript cannonBallScript)) {
+			cannonBallScript.SetInit(GravityCenter, WindDir, Cannon.transform.forward * CannonBallVelocity);
+		} else {
+			Debug.LogWarning("Spawned object is not a cannonball");
+		}
 
 	}
 

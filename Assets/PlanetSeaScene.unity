@@ -877,6 +877,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254518134}
   m_CullTransparentMesh: 1
+--- !u!4 &291154077 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+  m_PrefabInstance: {fileID: 7806088892095502010}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &485096714
 GameObject:
   m_ObjectHideFlags: 0
@@ -1366,6 +1371,7 @@ Transform:
   m_Children:
   - {fileID: 225411824}
   - {fileID: 1538905252}
+  - {fileID: 291154077}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2921,7 +2927,9 @@ MonoBehaviour:
   Rudder: {fileID: 133052833}
   Mainsail: {fileID: 233616901}
   Foresail: {fileID: 925578774}
-  Cannon: {fileID: 0}
+  Cannon: {fileID: 882620842}
+  CannonBallSpawnPoint: {fileID: 1711801865}
+  CannonBallObject: {fileID: 7806088892375055910, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
   RudderSpeed: 10
   RudderAngleMul: 30
   MainsailSpeed: 10
@@ -2930,7 +2938,7 @@ MonoBehaviour:
   ForesailSpeed: 10
   ForesailBufferSpeed: 3
   ForesailAngleMul: 40
-  Rotate: 1
+  CannonBallVelocity: 25
   WeightCenter: {x: 0, y: -5, z: 0}
   FrontForcePoint: {x: 0, y: -1.6244354, z: 8.006203}
   RearForcePoint: {x: 0, y: -1.2721176, z: -6.364998}
@@ -3072,7 +3080,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -59.800003, y: 0.00036716}
+  m_AnchoredPosition: {x: -59.799988, y: 0.00036716}
   m_SizeDelta: {x: 103.51, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1558921732
@@ -5224,3 +5232,64 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+--- !u!1001 &7806088892095502010
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 783286133}
+    m_Modifications:
+    - target: {fileID: 7806088892375055910, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_Name
+      value: CannonBall
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055910, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 148.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 110.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 126.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}

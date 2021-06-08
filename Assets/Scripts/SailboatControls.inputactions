@@ -214,6 +214,17 @@
                 },
                 {
                     "name": "",
+                    "id": "6a8fb587-a815-466b-8bb1-a0650a0e3618",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "7a236c42-0094-4343-83e8-10e6fa48c38c",
                     "path": "<Gamepad>/rightStick/x",
                     "interactions": "",
@@ -222,6 +233,39 @@
                     "action": "TurnCannon",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "d8fbebcb-fb0c-48a1-9553-be6e45301b97",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TurnCannon",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "3befa7a4-bd3b-46e6-9cac-54c0d338af74",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TurnCannon",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "ee5d329b-e23c-4a32-a534-91eeef4c14b2",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TurnCannon",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },
