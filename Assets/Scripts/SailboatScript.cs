@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class SailboatScript : MonoBehaviour {
 
 	public GameObject GravityCenter;
 	public float GravityAmount = 9.81f;
+	public Vector3 WindDir = Vector3.down;
 	public float ThrustAmount = 1f;
 
 	[Range(0, 1)]
@@ -18,6 +20,7 @@ public class SailboatScript : MonoBehaviour {
 	public GameObject Rudder;
 	public GameObject Mainsail;
 	public GameObject Foresail;
+	public GameObject Cannon;
 
 	[Space]
 	public float RudderSpeed = 1;
@@ -40,23 +43,38 @@ public class SailboatScript : MonoBehaviour {
 	float mainsailBuffer = 0;
 	float foresailValue = 0;
 	float foresailBuffer = 0;
+	float turnCannonValue = 0;
+	// float turnCannonBuffer = 0;
 
 	Quaternion foresailRot;
 
 	Rigidbody boatRb;
 
-	float angleBuffer = 0;
+	// float angleBuffer = 0;
 
 	[Space]
 	public Vector3 WeightCenter;
-
 	public Vector3 FrontForcePoint;
 	public Vector3 RearForcePoint;
+
+	[Space]
+	public UnityEvent<float> RudderEvent;
+	public UnityEvent<float> MainsailEvent;
+	public UnityEvent<float> ForesailEvent;
+	public UnityEvent<float> TurnCannonEvent;
+	public UnityEvent<Vector3> WindDirEvent;
+
 
 	void Start() {
 		foresailRot = Foresail.transform.localRotation;
 		boatRb = GetComponent<Rigidbody>();
 		boatRb.centerOfMass = WeightCenter;
+
+		RudderEvent.Invoke(rudderValue);
+		MainsailEvent.Invoke(mainsailValue);
+		ForesailEvent.Invoke(foresailValue);
+		TurnCannonEvent.Invoke(turnCannonValue);
+
 	}
 
 	void Update() {
@@ -89,18 +107,43 @@ public class SailboatScript : MonoBehaviour {
 			boatRb.velocity = boatRb.velocity.normalized * VelocityCap;
 		}
 
+		// TODO: calculate wind dir relative to boat world facing
+		// Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
+		float boatWindAngle = Vector3.SignedAngle(transform.forward, WindDir, transform.up);
+		WindDirEvent.Invoke(new Vector3(0, 0, boatWindAngle));
+
+	}
+
+	private void OnTriggerEnter(Collider other) {
+		if (other.CompareTag("WindZone") && other.TryGetComponent<WindZoneScript>(out WindZoneScript windZone)) {
+			WindDir = windZone.WindDir;
+		}
 	}
 
 	public void OnRudder(InputValue value) {
 		rudderValue = value.Get<float>();
+		RudderEvent.Invoke(rudderValue);
 	}
 
 	public void OnMainsail(InputValue value) {
 		mainsailValue = value.Get<float>();
+		MainsailEvent.Invoke(mainsailValue);
 	}
 
 	public void OnForesail(InputValue value) {
 		foresailValue = value.Get<float>();
+		ForesailEvent.Invoke(foresailValue);
+	}
+
+	public void OnTurnCannon(InputValue value) {
+		turnCannonValue = value.Get<float>();
+		TurnCannonEvent.Invoke(turnCannonValue);
+	}
+
+	public void OnFire(InputValue value) {
+		if (value.Get<float>() > 0f)
+			Fire();
+
 	}
 
 	public void SetRudder(float value) {
@@ -111,6 +154,14 @@ public class SailboatScript : MonoBehaviour {
 	}
 	public void SetForesail(float value) {
 		foresailValue = value;
+	}
+	public void SetTurnCannon(float value) {
+		turnCannonValue = value;
+	}
+
+	public void Fire() {
+		// TODO: spawn projectile
+
 	}
 
 }
