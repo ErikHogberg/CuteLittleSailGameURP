@@ -44,6 +44,14 @@
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "ResetPress",
+                    "type": "Value",
+                    "id": "2d1c880f-de59-48a0-a023-e3ae8fd1aacd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -182,7 +190,7 @@
                 {
                     "name": "negative",
                     "id": "684f5cf7-eec3-4955-89af-df999566e3f9",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -193,7 +201,7 @@
                 {
                     "name": "positive",
                     "id": "3a149136-a364-499b-b830-ad1ee1ab8f7e",
-                    "path": "<Keyboard>/r",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -266,6 +274,17 @@
                     "action": "TurnCannon",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "c97d9d81-411a-4e6c-967e-dfabaa2ff62d",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResetPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

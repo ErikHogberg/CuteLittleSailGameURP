@@ -7,8 +7,9 @@ using UnityEngine.InputSystem;
 
 public class SailboatScript : MonoBehaviour {
 
-	public GameObject GravityCenter;
 	public float GravityAmount = 9.81f;
+	public AnimationCurve GravityDropoff;
+	public float GravityMaxDistanceSqr = 9f;
 	public Vector3 WindDir = Vector3.down;
 	public float ThrustAmount = 1f;
 
@@ -40,6 +41,10 @@ public class SailboatScript : MonoBehaviour {
 	public float ForesailAngleMul = 1;
 
 	[Space]
+	public float CannonSpeed = 1;
+	public float CannonBufferSpeed = 1;
+	public float CannonAngleMul = 1;
+
 	public float CannonBallVelocity = 1f;
 
 	float rudderValue = 0;
@@ -49,7 +54,7 @@ public class SailboatScript : MonoBehaviour {
 	float foresailValue = 0;
 	float foresailBuffer = 0;
 	float turnCannonValue = 0;
-	// float turnCannonBuffer = 0;
+	float turnCannonBuffer = 0;
 
 	Quaternion foresailRot;
 
@@ -69,6 +74,7 @@ public class SailboatScript : MonoBehaviour {
 	public UnityEvent<float> TurnCannonEvent;
 	public UnityEvent<Vector3> WindDirEvent;
 
+	Vector3 initPos;
 
 	void Start() {
 		foresailRot = Foresail.transform.localRotation;
@@ -80,36 +86,57 @@ public class SailboatScript : MonoBehaviour {
 		ForesailEvent.Invoke(foresailValue);
 		TurnCannonEvent.Invoke(turnCannonValue);
 
+		initPos = transform.position;
 	}
 
 	void Update() {
 		rudderBuffer = Mathf.MoveTowards(rudderBuffer, rudderValue, RudderSpeed * Time.deltaTime);
 
 		// mainsailBuffer = Mathf.MoveTowards(mainsailBuffer, mainsail, MainsailBufferSpeed * Time.deltaTime);
-		mainsailBuffer += mainsailValue * MainsailBufferSpeed * Time.deltaTime;
-		mainsailBuffer = Mathf.Clamp01(mainsailBuffer);
+		if (Mathf.Abs(mainsailValue) > 0) {
+			mainsailBuffer += mainsailValue * MainsailBufferSpeed * Time.deltaTime;
+			mainsailBuffer = Mathf.Clamp01(mainsailBuffer);
+			MainsailEvent.Invoke(mainsailBuffer);
+		}
 
 		// foresailBuffer = Mathf.MoveTowards(foresailBuffer, foresail, ForesailBufferSpeed * Time.deltaTime);
-		foresailBuffer += foresailValue * ForesailBufferSpeed * Time.deltaTime;
-		foresailBuffer = Mathf.Clamp01(foresailBuffer);
+		if (Mathf.Abs(foresailValue) > 0) {
+			foresailBuffer += foresailValue * ForesailBufferSpeed * Time.deltaTime;
+			foresailBuffer = Mathf.Clamp01(foresailBuffer);
+			ForesailEvent.Invoke(foresailBuffer);
+		}
 
 		Rudder.transform.localRotation = Quaternion.AngleAxis(rudderBuffer * RudderAngleMul, Vector3.down);
 		Mainsail.transform.localRotation = Quaternion.AngleAxis(mainsailBuffer * MainsailAngleMul, Vector3.forward);
 		Foresail.transform.localRotation = Quaternion.AngleAxis(foresailBuffer * ForesailAngleMul, foresailRot * Vector3.forward) * foresailRot;
 
-		// TODO: rotate cannon
-		// Cannon.transform.localRotation = Quaternion.AngleAxis(turnCannonValue, Vector3.up);
+
+		if (Mathf.Abs(turnCannonValue) > 0) {
+			turnCannonBuffer += turnCannonValue * CannonBufferSpeed * Time.deltaTime;
+			TurnCannonEvent.Invoke(turnCannonBuffer);
+		}
+		Cannon.transform.localRotation = Quaternion.AngleAxis(turnCannonBuffer * CannonAngleMul, Vector3.up);
 	}
 
 
 	private void FixedUpdate() {
 
-		Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
+		// Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
 
-		boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Acceleration); // gravity
+		// TODO: support for multiple gravity sources
+		// IDEA: make planets pull all rigidbodies in range instead of vice versa
+		// IDEA: gravity drop-off as distance from planet increases
+		// boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Acceleration); // gravity
 
 		// thrust
 		// TODO: calculate forward speed based on mainsail angle compared to wind
+		// TODO: make wind magnitude affect forward speed/force
+		// TODO: mainsail headwind angle forward force percentage calculation
+		// TODO: mainsail tailwind angle forward force percentage calculation
+		// TODO: foresail headwind angle forward force percentage calculation
+		// TODO: foresail tailwind angle forward force percentage calculation
+		// TODO: automatically flip sails between port and starboard
+
 		float forwardSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
 		boatRb.AddForceAtPosition(transform.forward * forwardSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
 		boatRb.AddForceAtPosition(Rudder.transform.forward * forwardSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
@@ -120,7 +147,7 @@ public class SailboatScript : MonoBehaviour {
 
 		// Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
 		float boatWindAngle = Vector3.SignedAngle(transform.forward, WindDir, transform.up);
-		WindDirEvent.Invoke(new Vector3(0, 0, boatWindAngle));
+		WindDirEvent.Invoke(new Vector3(0, 0, -boatWindAngle));
 
 	}
 
@@ -130,6 +157,22 @@ public class SailboatScript : MonoBehaviour {
 		}
 	}
 
+	private void OnTriggerStay(Collider other) {
+
+		// NOTE: cannot have different gravity per source
+		if (other.CompareTag("GravitySource")) {
+			Vector3 delta = transform.position - other.transform.position;
+			Vector3 gravityDir = delta.normalized;
+			float gravityPercent = GravityDropoff.Evaluate(delta.sqrMagnitude / GravityMaxDistanceSqr);
+			boatRb.AddForce(gravityDir * GravityAmount * gravityPercent, ForceMode.Acceleration); // gravity
+		}
+	}
+
+	private void OnCollisionEnter(Collision other) {
+		// TODO: lose when hit by enemy cannonball
+		// TODO: decide what happens on "game over" for a player
+	}
+
 	public void OnRudder(InputValue value) {
 		rudderValue = value.Get<float>();
 		RudderEvent.Invoke(rudderValue);
@@ -137,36 +180,40 @@ public class SailboatScript : MonoBehaviour {
 
 	public void OnMainsail(InputValue value) {
 		mainsailValue = value.Get<float>();
-		MainsailEvent.Invoke(mainsailValue);
+		// MainsailEvent.Invoke(mainsailValue);
 	}
 
 	public void OnForesail(InputValue value) {
 		foresailValue = value.Get<float>();
-		ForesailEvent.Invoke(foresailValue);
+		// ForesailEvent.Invoke(foresailValue);
 	}
 
 	public void OnTurnCannon(InputValue value) {
 		turnCannonValue = value.Get<float>();
-		TurnCannonEvent.Invoke(turnCannonValue);
+		// TurnCannonEvent.Invoke(turnCannonValue);
 	}
 
 	public void OnFire(InputValue value) {
 		if (value.Get<float>() > 0f)
 			Fire();
+	}
 
+	public void OnResetPress(InputValue value) {
+		if (value.Get<float>() > 0f)
+			ResetPress();
 	}
 
 	public void SetRudder(float value) {
 		rudderValue = value;
 	}
 	public void SetMainsail(float value) {
-		mainsailValue = value;
+		mainsailBuffer = value;
 	}
 	public void SetForesail(float value) {
-		foresailValue = value;
+		foresailBuffer = value;
 	}
 	public void SetTurnCannon(float value) {
-		turnCannonValue = value;
+		turnCannonBuffer = value;
 	}
 
 	public void Fire() {
@@ -179,11 +226,16 @@ public class SailboatScript : MonoBehaviour {
 		// IDEA: projectile buffer instead of creating and destroying every projectile
 		GameObject cannonBall = Instantiate(CannonBallObject, CannonBallSpawnPoint.transform.position, Cannon.transform.rotation);
 		if (cannonBall.TryGetComponent<CannonBallScript>(out CannonBallScript cannonBallScript)) {
-			cannonBallScript.SetInit(GravityCenter, WindDir, Cannon.transform.forward * CannonBallVelocity);
+			cannonBallScript.SetInit(WindDir, Cannon.transform.forward * CannonBallVelocity);
 		} else {
 			Debug.LogWarning("Spawned object is not a cannonball");
 		}
 
+	}
+
+	public void ResetPress(){
+		boatRb.velocity = Vector3.zero;
+		transform.position = initPos;
 	}
 
 }

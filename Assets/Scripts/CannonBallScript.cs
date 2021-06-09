@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class CannonBallScript : MonoBehaviour {
 
-	public GameObject GravityCenter;
 	public float GravityAmount = 9.81f;
+	public AnimationCurve GravityDropoff;
+	public float GravityMaxDistanceSqr = 9f;
 	public Vector3 WindDir = Vector3.up;
 
-    public float DespawnTime = 10f;
+	public float DespawnTime = 10f;
 	Rigidbody ballRb;
 
-	public void SetInit(GameObject gravityCenter, Vector3 windDir, Vector3 velocity) {
-		GravityCenter = gravityCenter;
+	// TODO: player ownership
+
+	public void SetInit(Vector3 windDir, Vector3 velocity) {
 		WindDir = windDir;
 		if (!ballRb)
 			ballRb = GetComponent<Rigidbody>();
@@ -25,16 +27,21 @@ public class CannonBallScript : MonoBehaviour {
 			ballRb = GetComponent<Rigidbody>();
 	}
 
-	void FixedUpdate() {
-		Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
+	private void Update() {
+		DespawnTime -= Time.deltaTime;
+		if (DespawnTime < 0)
+			Destroy(gameObject);
 
-		ballRb.AddForce(gravityDir * GravityAmount, ForceMode.Acceleration); // gravity
 	}
 
-    private void Update() {
-        DespawnTime -= Time.deltaTime;
-        if(DespawnTime < 0){
-            Destroy(gameObject);
-        }
-    }
+	private void OnTriggerStay(Collider other) {
+
+		// NOTE: cannot have different gravity per source
+		if (other.CompareTag("GravitySource")) {
+			Vector3 delta = transform.position - other.transform.position;
+			Vector3 gravityDir = delta.normalized;
+			float gravityPercent = GravityDropoff.Evaluate(delta.sqrMagnitude / GravityMaxDistanceSqr);
+			ballRb.AddForce(gravityDir * GravityAmount * gravityPercent, ForceMode.Acceleration); // gravity
+		}
+	}
 }
