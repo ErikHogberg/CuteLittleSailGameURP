@@ -29,6 +29,12 @@ public class SailboatScript : MonoBehaviour {
 	// IDEA: only on fire button down, fire on release?
 
 	[Space]
+	public AnimationCurve MainsailBeatingCurve;
+	public AnimationCurve MainsailReachingCurve;
+	public AnimationCurve ForesailBeatingCurve;
+	public AnimationCurve ForesailReachingCurve;
+
+	[Space]
 	public float RudderSpeed = 1;
 	public float RudderAngleMul = 1;
 	[Space]
@@ -90,6 +96,8 @@ public class SailboatScript : MonoBehaviour {
 	}
 
 	void Update() {
+
+		// IDEA: option to set rudder using mouse, always angling to steer towards projected mouse position on plane
 		rudderBuffer = Mathf.MoveTowards(rudderBuffer, rudderValue, RudderSpeed * Time.deltaTime);
 
 		// mainsailBuffer = Mathf.MoveTowards(mainsailBuffer, mainsail, MainsailBufferSpeed * Time.deltaTime);
@@ -113,6 +121,7 @@ public class SailboatScript : MonoBehaviour {
 
 		if (Mathf.Abs(turnCannonValue) > 0) {
 			turnCannonBuffer += turnCannonValue * CannonBufferSpeed * Time.deltaTime;
+			turnCannonBuffer = Mathf.Clamp(turnCannonBuffer, -1, 1);
 			TurnCannonEvent.Invoke(turnCannonBuffer);
 		}
 		Cannon.transform.localRotation = Quaternion.AngleAxis(turnCannonBuffer * CannonAngleMul, Vector3.up);
@@ -121,15 +130,32 @@ public class SailboatScript : MonoBehaviour {
 
 	private void FixedUpdate() {
 
-		// Vector3 gravityDir = (transform.position - GravityCenter.transform.position).normalized;
-
-		// TODO: support for multiple gravity sources
-		// IDEA: make planets pull all rigidbodies in range instead of vice versa
-		// IDEA: gravity drop-off as distance from planet increases
-		// boatRb.AddForce(gravityDir * GravityAmount, ForceMode.Acceleration); // gravity
-
 		// thrust
 		// TODO: calculate forward speed based on mainsail angle compared to wind
+		// Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
+		float boatWindAngle = Vector3.SignedAngle(transform.forward, WindDir, transform.up);
+		float boatWindAngleAbs = Mathf.Abs(boatWindAngle);
+		float MainsailPercent = 0f;
+		// TODO: account for mainsail angle
+		if (boatWindAngleAbs > 45f) {
+			if (boatWindAngleAbs > 90f) {
+				MainsailPercent = MainsailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
+			} else {
+				MainsailPercent = MainsailBeatingCurve.Evaluate((boatWindAngleAbs - 45f) / 45f);
+			}
+		}
+
+		float ForesailPercent = 1f;
+		// TODO: account for foresail angle
+		if (boatWindAngleAbs > 45f) {
+			if (boatWindAngleAbs > 90f) {
+				ForesailPercent = ForesailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
+			} else {
+				ForesailPercent = ForesailBeatingCurve.Evaluate((boatWindAngleAbs - 45f) / 45f);
+			}
+		}
+		// IDEA: give no/less foresail force when directly downwind if both sails are turned to the same side, because the mainsail blocks the wind to the foresail
+
 		// TODO: make wind magnitude affect forward speed/force
 		// TODO: mainsail headwind angle forward force percentage calculation
 		// TODO: mainsail tailwind angle forward force percentage calculation
@@ -137,16 +163,15 @@ public class SailboatScript : MonoBehaviour {
 		// TODO: foresail tailwind angle forward force percentage calculation
 		// TODO: automatically flip sails between port and starboard
 
-		float forwardSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
-		boatRb.AddForceAtPosition(transform.forward * forwardSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
-		boatRb.AddForceAtPosition(Rudder.transform.forward * forwardSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
+		float mainsailSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
+		float foresailSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
+		boatRb.AddForceAtPosition(transform.forward * mainsailSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
+		boatRb.AddForceAtPosition(Rudder.transform.forward * mainsailSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
 
 		if (boatRb.velocity.sqrMagnitude > VelocityCap * VelocityCap) {
 			boatRb.velocity = boatRb.velocity.normalized * VelocityCap;
 		}
 
-		// Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
-		float boatWindAngle = Vector3.SignedAngle(transform.forward, WindDir, transform.up);
 		WindDirEvent.Invoke(new Vector3(0, 0, -boatWindAngle));
 
 	}
@@ -233,7 +258,7 @@ public class SailboatScript : MonoBehaviour {
 
 	}
 
-	public void ResetPress(){
+	public void ResetPress() {
 		boatRb.velocity = Vector3.zero;
 		transform.position = initPos;
 	}

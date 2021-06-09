@@ -15,11 +15,13 @@ public class CannonBallScript : MonoBehaviour {
 	// TODO: player ownership
 
 	public void SetInit(Vector3 windDir, Vector3 velocity) {
+		gameObject.SetActive(true);
 		WindDir = windDir;
 		if (!ballRb)
 			ballRb = GetComponent<Rigidbody>();
 		ballRb.velocity = velocity;
-		// IDEA: ball spin
+		// IDEA: ball spin. randomized?
+		// IDEA: change texture to something that makes rotation noticable
 	}
 
 	void Start() {
