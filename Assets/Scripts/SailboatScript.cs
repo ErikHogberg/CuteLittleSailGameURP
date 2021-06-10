@@ -12,6 +12,8 @@ public class SailboatScript : MonoBehaviour {
 	public float GravityMaxDistanceSqr = 9f;
 	public Vector3 WindDir = Vector3.down;
 	public float ThrustAmount = 1f;
+	public float TurnAngularForce = 1f;
+
 
 	[Range(0, 1)]
 	public float FrontRearForceRatio = .5f;
@@ -67,11 +69,14 @@ public class SailboatScript : MonoBehaviour {
 	Rigidbody boatRb;
 
 	// float angleBuffer = 0;
+	bool SailsOn = true;
 
 	[Space]
 	public Vector3 WeightCenter;
 	public Vector3 FrontForcePoint;
 	public Vector3 RearForcePoint;
+	[Space]
+	public GameObject ResetObject;
 
 	[Space]
 	public UnityEvent<float> RudderEvent;
@@ -92,7 +97,10 @@ public class SailboatScript : MonoBehaviour {
 		ForesailEvent.Invoke(foresailValue);
 		TurnCannonEvent.Invoke(turnCannonValue);
 
-		initPos = transform.position;
+		if (ResetObject)
+			initPos = transform.position - ResetObject.transform.position;
+		else
+			initPos = transform.position;
 	}
 
 	void Update() {
@@ -130,6 +138,9 @@ public class SailboatScript : MonoBehaviour {
 
 	private void FixedUpdate() {
 
+		if (!SailsOn)
+			return;
+
 		// thrust
 		// TODO: calculate forward speed based on mainsail angle compared to wind
 		// Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
@@ -137,8 +148,10 @@ public class SailboatScript : MonoBehaviour {
 		float boatWindAngleAbs = Mathf.Abs(boatWindAngle);
 		float MainsailPercent = 0f;
 		// TODO: account for mainsail angle
-		if (boatWindAngleAbs > 45f) {
-			if (boatWindAngleAbs > 90f) {
+		float mainsailWindAngle = boatWindAngle + mainsailBuffer * MainsailAngleMul;
+		float mainsailWindAngleAbs = Mathf.Abs(mainsailWindAngle);
+		if (mainsailWindAngleAbs > 45f) {
+			if (mainsailWindAngleAbs > 90f) {
 				MainsailPercent = MainsailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
 			} else {
 				MainsailPercent = MainsailBeatingCurve.Evaluate((boatWindAngleAbs - 45f) / 45f);
@@ -147,8 +160,10 @@ public class SailboatScript : MonoBehaviour {
 
 		float ForesailPercent = 1f;
 		// TODO: account for foresail angle
-		if (boatWindAngleAbs > 45f) {
-			if (boatWindAngleAbs > 90f) {
+		float foresailWindAngle = boatWindAngle + foresailBuffer * ForesailAngleMul;
+		float foresailWindAngleAbs = Mathf.Abs(foresailWindAngle);
+		if (foresailWindAngleAbs > 45f) {
+			if (foresailWindAngleAbs > 90f) {
 				ForesailPercent = ForesailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
 			} else {
 				ForesailPercent = ForesailBeatingCurve.Evaluate((boatWindAngleAbs - 45f) / 45f);
@@ -163,10 +178,14 @@ public class SailboatScript : MonoBehaviour {
 		// TODO: foresail tailwind angle forward force percentage calculation
 		// TODO: automatically flip sails between port and starboard
 
-		float mainsailSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
-		float foresailSpeed = ThrustAmount * Mathf.Clamp01(mainsailValue);
-		boatRb.AddForceAtPosition(transform.forward * mainsailSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
-		boatRb.AddForceAtPosition(Rudder.transform.forward * mainsailSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
+		float mainsailSpeed = ThrustAmount * MainsailPercent;//Mathf.Clamp01(mainsailValue);
+		float foresailSpeed = ThrustAmount * ForesailPercent;//Mathf.Clamp01(mainsailValue);
+
+		// boatRb.AddForceAtPosition(transform.forward * foresailSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
+		// boatRb.AddForceAtPosition(Rudder.transform.forward * mainsailSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
+		boatRb.AddRelativeForce(Vector3.forward * (foresailSpeed * FrontRearForceRatio + mainsailSpeed * (1f - FrontRearForceRatio)), ForceMode.Force);
+
+		boatRb.AddRelativeTorque(new Vector3(0, rudderBuffer * TurnAngularForce, 0), ForceMode.Force);
 
 		if (boatRb.velocity.sqrMagnitude > VelocityCap * VelocityCap) {
 			boatRb.velocity = boatRb.velocity.normalized * VelocityCap;
@@ -228,6 +247,11 @@ public class SailboatScript : MonoBehaviour {
 			ResetPress();
 	}
 
+	public void OnToggleSails(InputValue value) {
+		if (value.Get<float>() > 0f)
+			SailsOn = !SailsOn;
+	}
+
 	public void SetRudder(float value) {
 		rudderValue = value;
 	}
@@ -249,6 +273,7 @@ public class SailboatScript : MonoBehaviour {
 		}
 
 		// IDEA: projectile buffer instead of creating and destroying every projectile
+		// FIXME: cannonballs not spawning at spawnpoint under some conditions
 		GameObject cannonBall = Instantiate(CannonBallObject, CannonBallSpawnPoint.transform.position, Cannon.transform.rotation);
 		if (cannonBall.TryGetComponent<CannonBallScript>(out CannonBallScript cannonBallScript)) {
 			cannonBallScript.SetInit(WindDir, Cannon.transform.forward * CannonBallVelocity);
@@ -260,7 +285,10 @@ public class SailboatScript : MonoBehaviour {
 
 	public void ResetPress() {
 		boatRb.velocity = Vector3.zero;
-		transform.position = initPos;
+		if (ResetObject)
+			transform.position = initPos + ResetObject.transform.position;
+		else
+			transform.position = initPos;
 	}
 
 }
