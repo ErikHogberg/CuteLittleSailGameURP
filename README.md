@@ -3,7 +3,10 @@ Cute Little Sail Game URP
 PvP sailing game
 ----------------
 
-Unity URP game about sailing a small ship around a small planet.
+WIP Unity URP game about sailing a small ship around a small planet.
+
+Maneuver your sloop using the mainsail, foresail and rudder to put your opponent in the line of fire of your cannon in this sailing battle to the death!
+
 
 
 Planet model:
