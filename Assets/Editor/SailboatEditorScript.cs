@@ -13,8 +13,8 @@ public class SailboatEditorScript : Editor {
 		EditorGUI.BeginChangeCheck();
 
 		sailboatScript.WeightCenter = sailboatScript.transform.InverseTransformPoint(Handles.DoPositionHandle(sailboatScript.transform.TransformPoint(sailboatScript.WeightCenter), sailboatScript.transform.rotation));
-		sailboatScript.FrontForcePoint = sailboatScript.transform.InverseTransformPoint(Handles.DoPositionHandle(sailboatScript.transform.TransformPoint(sailboatScript.FrontForcePoint), sailboatScript.transform.rotation));
-		sailboatScript.RearForcePoint = sailboatScript.transform.InverseTransformPoint(Handles.DoPositionHandle(sailboatScript.transform.TransformPoint(sailboatScript.RearForcePoint), sailboatScript.transform.rotation));
+		// sailboatScript.FrontForcePoint = sailboatScript.transform.InverseTransformPoint(Handles.DoPositionHandle(sailboatScript.transform.TransformPoint(sailboatScript.FrontForcePoint), sailboatScript.transform.rotation));
+		// sailboatScript.RearForcePoint = sailboatScript.transform.InverseTransformPoint(Handles.DoPositionHandle(sailboatScript.transform.TransformPoint(sailboatScript.RearForcePoint), sailboatScript.transform.rotation));
 
 		if (EditorGUI.EndChangeCheck()) {
 			Undo.RecordObject(this, "moved sailboat force point");

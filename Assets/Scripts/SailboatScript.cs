@@ -31,6 +31,7 @@ public class SailboatScript : MonoBehaviour {
 	// IDEA: only on fire button down, fire on release?
 
 	[Space]
+	public float NoGoAngleThreshold = 30f;
 	public AnimationCurve MainsailBeatingCurve;
 	public AnimationCurve MainsailReachingCurve;
 	public AnimationCurve ForesailBeatingCurve;
@@ -73,8 +74,8 @@ public class SailboatScript : MonoBehaviour {
 
 	[Space]
 	public Vector3 WeightCenter;
-	public Vector3 FrontForcePoint;
-	public Vector3 RearForcePoint;
+	// public Vector3 FrontForcePoint;
+	// public Vector3 RearForcePoint;
 	[Space]
 	public GameObject ResetObject;
 
@@ -84,6 +85,7 @@ public class SailboatScript : MonoBehaviour {
 	public UnityEvent<float> ForesailEvent;
 	public UnityEvent<float> TurnCannonEvent;
 	public UnityEvent<Vector3> WindDirEvent;
+	public UnityEvent<string> WindMagnitudeEvent;
 
 	Vector3 initPos;
 
@@ -143,18 +145,20 @@ public class SailboatScript : MonoBehaviour {
 
 		// thrust
 		// TODO: calculate forward speed based on mainsail angle compared to wind
-		// Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
+		Vector3 boatWindFacing = Vector3.ProjectOnPlane(WindDir, transform.up);
 		float boatWindAngle = Vector3.SignedAngle(transform.forward, WindDir, transform.up);
 		float boatWindAngleAbs = Mathf.Abs(boatWindAngle);
+		float windMagnitude = boatWindFacing.magnitude;
+
 		float MainsailPercent = 0f;
 		// TODO: account for mainsail angle
 		float mainsailWindAngle = boatWindAngle + mainsailBuffer * MainsailAngleMul;
 		float mainsailWindAngleAbs = Mathf.Abs(mainsailWindAngle);
-		if (mainsailWindAngleAbs > 45f) {
+		if (mainsailWindAngleAbs > NoGoAngleThreshold) {
 			if (mainsailWindAngleAbs > 90f) {
 				MainsailPercent = MainsailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
 			} else {
-				MainsailPercent = MainsailBeatingCurve.Evaluate((boatWindAngleAbs - 45f) / 45f);
+				MainsailPercent = MainsailBeatingCurve.Evaluate((boatWindAngleAbs - NoGoAngleThreshold) / (90f - NoGoAngleThreshold));
 			}
 		}
 
@@ -162,20 +166,15 @@ public class SailboatScript : MonoBehaviour {
 		// TODO: account for foresail angle
 		float foresailWindAngle = boatWindAngle + foresailBuffer * ForesailAngleMul;
 		float foresailWindAngleAbs = Mathf.Abs(foresailWindAngle);
-		if (foresailWindAngleAbs > 45f) {
+		if (foresailWindAngleAbs > NoGoAngleThreshold) {
 			if (foresailWindAngleAbs > 90f) {
 				ForesailPercent = ForesailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
 			} else {
-				ForesailPercent = ForesailBeatingCurve.Evaluate((boatWindAngleAbs - 45f) / 45f);
+				ForesailPercent = ForesailBeatingCurve.Evaluate((boatWindAngleAbs - NoGoAngleThreshold) / (90f - NoGoAngleThreshold));
 			}
 		}
 		// IDEA: give no/less foresail force when directly downwind if both sails are turned to the same side, because the mainsail blocks the wind to the foresail
 
-		// TODO: make wind magnitude affect forward speed/force
-		// TODO: mainsail headwind angle forward force percentage calculation
-		// TODO: mainsail tailwind angle forward force percentage calculation
-		// TODO: foresail headwind angle forward force percentage calculation
-		// TODO: foresail tailwind angle forward force percentage calculation
 		// TODO: automatically flip sails between port and starboard
 
 		float mainsailSpeed = ThrustAmount * MainsailPercent;//Mathf.Clamp01(mainsailValue);
@@ -183,7 +182,7 @@ public class SailboatScript : MonoBehaviour {
 
 		// boatRb.AddForceAtPosition(transform.forward * foresailSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
 		// boatRb.AddForceAtPosition(Rudder.transform.forward * mainsailSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
-		boatRb.AddRelativeForce(Vector3.forward * (foresailSpeed * FrontRearForceRatio + mainsailSpeed * (1f - FrontRearForceRatio)), ForceMode.Force);
+		boatRb.AddRelativeForce(Vector3.forward * windMagnitude * (foresailSpeed * FrontRearForceRatio + mainsailSpeed * (1f - FrontRearForceRatio)), ForceMode.Force);
 
 		boatRb.AddRelativeTorque(new Vector3(0, rudderBuffer * TurnAngularForce, 0), ForceMode.Force);
 
@@ -192,7 +191,7 @@ public class SailboatScript : MonoBehaviour {
 		}
 
 		WindDirEvent.Invoke(new Vector3(0, 0, -boatWindAngle));
-
+		WindMagnitudeEvent.Invoke(windMagnitude.ToString("0.00"));
 	}
 
 	private void OnTriggerEnter(Collider other) {
