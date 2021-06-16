@@ -22,6 +22,8 @@ public class SailboatScript : MonoBehaviour {
 	[Space]
 	public GameObject Rudder;
 	public GameObject Mainsail;
+	// TODO: rename jib, or headsail?
+	// IDEA: option to ignore foresail, to reduce difficulty?
 	public GameObject Foresail;
 	public GameObject Cannon;
 	public GameObject CannonBallSpawnPoint;
@@ -273,7 +275,8 @@ public class SailboatScript : MonoBehaviour {
 
 		// IDEA: projectile buffer instead of creating and destroying every projectile
 		// FIXME: cannonballs not spawning at spawnpoint under some conditions
-		GameObject cannonBall = Instantiate(CannonBallObject, CannonBallSpawnPoint.transform.position, Cannon.transform.rotation);
+		GameObject cannonBall = Instantiate(CannonBallObject, CannonBallSpawnPoint.transform.position, Cannon.transform.rotation, transform.parent);
+		cannonBall.transform.position = CannonBallSpawnPoint.transform.position;
 		if (cannonBall.TryGetComponent<CannonBallScript>(out CannonBallScript cannonBallScript)) {
 			cannonBallScript.SetInit(WindDir, Cannon.transform.forward * CannonBallVelocity);
 		} else {
