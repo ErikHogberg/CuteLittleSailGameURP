@@ -5,8 +5,8 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/FlatSeaScene.unity
+    guid: 36efc4078ec523043957d1aeb6b91608
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 6fa54d19b8d5c3e43acf6d94d93aabda, type: 2}
