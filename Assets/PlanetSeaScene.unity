@@ -154,7 +154,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1911264778}
-  - {fileID: 2029018692}
+  - {fileID: 1315750884}
   m_Father: {fileID: 783286133}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -190,11 +190,144 @@ MonoBehaviour:
   Speed: 10
   Local: 1
   Rigidbody: {fileID: 225411825}
+--- !u!1 &253844302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 253844303}
+  - component: {fileID: 253844306}
+  - component: {fileID: 253844305}
+  - component: {fileID: 253844304}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: WindZone
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &253844303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253844302}
+  m_LocalRotation: {x: -0, y: -0, z: 0.21152669, w: 0.9773722}
+  m_LocalPosition: {x: 88.6, y: 50, z: 0}
+  m_LocalScale: {x: 57.25, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 662368915}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 24.424}
+--- !u!182 &253844304
+WindZone:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253844302}
+  m_Enabled: 0
+  m_Mode: 0
+  m_Radius: 20
+  m_WindMain: 1
+  m_WindTurbulence: 1
+  m_WindPulseMagnitude: 0.5
+  m_WindPulseFrequency: 0.01
+--- !u!114 &253844305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253844302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c0d8dac3c3a9554382461b5cbcdd267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WindDir: {x: -6.217331, y: 15.679123, z: 1}
+--- !u!65 &253844306
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253844302}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &291154077 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7806088892375055911, guid: e6afb255709ce604989cdec91b06f0c6, type: 3}
   m_PrefabInstance: {fileID: 7806088892095502010}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &384280706
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 384280707}
+  - component: {fileID: 384280709}
+  - component: {fileID: 384280708}
+  m_Layer: 0
+  m_Name: Sphere
+  m_TagString: WindZone
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &384280707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384280706}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.6, y: 42.2, z: 98.6}
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 662368915}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &384280708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384280706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c0d8dac3c3a9554382461b5cbcdd267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WindDir: {x: 19.40915, y: -22.595829, z: 1}
+--- !u!135 &384280709
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384280706}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!850595691 &496534569
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -257,6 +390,40 @@ LightingSettings:
   m_PVRFilteringAtrousPositionSigmaIndirect: 2
   m_PVRFilteringAtrousPositionSigmaAO: 1
   m_PVRTiledBaking: 0
+--- !u!1 &662368914
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 662368915}
+  m_Layer: 0
+  m_Name: Wind zones
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &662368915
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662368914}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.010000001, y: 0.010000001, z: 0.010000001}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 253844303}
+  - {fileID: 384280707}
+  - {fileID: 1694570173}
+  m_Father: {fileID: 1315750884}
+  m_RootOrder: 31
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &783286132
 GameObject:
   m_ObjectHideFlags: 0
@@ -731,11 +898,154 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WindDir: {x: 19.40915, y: -22.595829, z: 1}
+--- !u!1001 &1315750883
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 225411824}
+    m_Modifications:
+    - target: {fileID: 3628345211385720894, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_Name
+      value: planet (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628345211385720894, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_TagString
+      value: GravitySource
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -322
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 182
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.8916614
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.45270294
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -53.834
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+--- !u!4 &1315750884 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4112252731867196036, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+  m_PrefabInstance: {fileID: 1315750883}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1315750885 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3628345211385720894, guid: 89f180aff7f5f3743bb1bcbb721d3d35, type: 3}
+  m_PrefabInstance: {fileID: 1315750883}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1315750886
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315750885}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1538905252 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2252448763591269282, guid: 26f237ff4fd5e594f803bb3ea3dfe697, type: 3}
   m_PrefabInstance: {fileID: 3095783675557178869}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1694570172
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1694570173}
+  - component: {fileID: 1694570175}
+  - component: {fileID: 1694570174}
+  m_Layer: 0
+  m_Name: Sphere (1)
+  m_TagString: WindZone
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1694570173
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694570172}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.6, y: -102.1, z: 26.4}
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 662368915}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1694570174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694570172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c0d8dac3c3a9554382461b5cbcdd267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WindDir: {x: 19.40915, y: 0, z: 20}
+--- !u!135 &1694570175
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694570172}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1861343728
 GameObject:
   m_ObjectHideFlags: 0
@@ -825,14 +1135,14 @@ Transform:
   m_GameObject: {fileID: 2029018691}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.010000001, y: 0.010000001, z: 0.010000001}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 834905875}
   - {fileID: 1273737350}
   - {fileID: 1861343729}
-  m_Father: {fileID: 225411824}
-  m_RootOrder: 1
+  m_Father: {fileID: 1911264778}
+  m_RootOrder: 31
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3095783675557178869
 PrefabInstance:
@@ -859,7 +1169,7 @@ PrefabInstance:
       objectReference: {fileID: 1033768569}
     - target: {fileID: 2252448763591269280, guid: 26f237ff4fd5e594f803bb3ea3dfe697, type: 3}
       propertyPath: ThrustAmount
-      value: 0.7
+      value: 1.05
       objectReference: {fileID: 0}
     - target: {fileID: 2252448763591269280, guid: 26f237ff4fd5e594f803bb3ea3dfe697, type: 3}
       propertyPath: GravityAmount
