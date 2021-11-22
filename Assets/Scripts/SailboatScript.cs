@@ -13,6 +13,7 @@ public class SailboatScript : MonoBehaviour {
 	public Vector3 WindDir = Vector3.down;
 	public float ThrustAmount = 1f;
 	public float TurnAngularForce = 1f;
+	public float MinThrustPercent = .01f;
 
 
 	[Range(0, 1)]
@@ -24,6 +25,7 @@ public class SailboatScript : MonoBehaviour {
 	public GameObject Mainsail;
 	// TODO: rename jib, or headsail?
 	// IDEA: option to ignore foresail, to reduce difficulty?
+	// IDEA: add horizontal wings for controlling pitch
 	public GameObject Foresail;
 	public GameObject Cannon;
 	public GameObject CannonBallSpawnPoint;
@@ -42,6 +44,7 @@ public class SailboatScript : MonoBehaviour {
 	[Space]
 	public float RudderSpeed = 1;
 	public float RudderAngleMul = 1;
+	public ForceMode RudderForceMode = ForceMode.Force;
 	[Space]
 	public float MainsailSpeed = 1;
 	public float MainsailBufferSpeed = 1;
@@ -90,6 +93,7 @@ public class SailboatScript : MonoBehaviour {
 	public UnityEvent<string> WindMagnitudeEvent;
 
 	Vector3 initPos;
+	Transform lastGravitySource = null;
 
 	void Start() {
 		foresailRot = Foresail.transform.localRotation;
@@ -139,6 +143,8 @@ public class SailboatScript : MonoBehaviour {
 		Cannon.transform.localRotation = Quaternion.AngleAxis(turnCannonBuffer * CannonAngleMul, Vector3.up);
 	}
 
+	bool noGravitySources = true;
+	float mainsailPercent = 0f;
 
 	private void FixedUpdate() {
 
@@ -152,39 +158,43 @@ public class SailboatScript : MonoBehaviour {
 		float boatWindAngleAbs = Mathf.Abs(boatWindAngle);
 		float windMagnitude = boatWindFacing.magnitude;
 
-		float MainsailPercent = 0f;
+		mainsailPercent = 0f;
 		// TODO: account for mainsail angle
-		float mainsailWindAngle = boatWindAngle + mainsailBuffer * MainsailAngleMul;
+		float mainsailWindAngle = boatWindAngle - mainsailBuffer * MainsailAngleMul;
 		float mainsailWindAngleAbs = Mathf.Abs(mainsailWindAngle);
-		if (mainsailWindAngleAbs > NoGoAngleThreshold) {
-			if (mainsailWindAngleAbs > 90f) {
-				MainsailPercent = MainsailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
+		if (mainsailWindAngleAbs < 180f - NoGoAngleThreshold) {
+			if (mainsailWindAngleAbs < 90f) {
+				// mainsailPercent = MainsailReachingCurve.Evaluate((mainsailWindAngleAbs - 90f) / 90f);
+				mainsailPercent = MainsailReachingCurve.Evaluate(mainsailWindAngleAbs / 90f);
 			} else {
-				MainsailPercent = MainsailBeatingCurve.Evaluate((boatWindAngleAbs - NoGoAngleThreshold) / (90f - NoGoAngleThreshold));
+				// mainsailPercent = MainsailBeatingCurve.Evaluate((mainsailWindAngleAbs - NoGoAngleThreshold) / (90f - NoGoAngleThreshold));
+				mainsailPercent = MainsailBeatingCurve.Evaluate(1f - ((mainsailWindAngleAbs - 90f) / (90f - NoGoAngleThreshold)));
 			}
 		}
 
-		float ForesailPercent = 1f;
-		// TODO: account for foresail angle
-		float foresailWindAngle = boatWindAngle + foresailBuffer * ForesailAngleMul;
-		float foresailWindAngleAbs = Mathf.Abs(foresailWindAngle);
-		if (foresailWindAngleAbs > NoGoAngleThreshold) {
-			if (foresailWindAngleAbs > 90f) {
-				ForesailPercent = ForesailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
-			} else {
-				ForesailPercent = ForesailBeatingCurve.Evaluate((boatWindAngleAbs - NoGoAngleThreshold) / (90f - NoGoAngleThreshold));
-			}
-		}
+		mainsailPercent = Mathf.Max(mainsailPercent, MinThrustPercent);
+
+		// float foresailWindAngle = boatWindAngle + foresailBuffer * ForesailAngleMul;
+		// float foresailWindAngleAbs = Mathf.Abs(foresailWindAngle);
+		// if (foresailWindAngleAbs > NoGoAngleThreshold) {
+		// 	if (foresailWindAngleAbs > 90f) {
+		// 		ForesailPercent = ForesailReachingCurve.Evaluate((boatWindAngleAbs - 90f) / 90f);
+		// 	} else {
+		// 		ForesailPercent = ForesailBeatingCurve.Evaluate((boatWindAngleAbs - NoGoAngleThreshold) / (90f - NoGoAngleThreshold));
+		// 	}
+		// }
 		// IDEA: give no/less foresail force when directly downwind if both sails are turned to the same side, because the mainsail blocks the wind to the foresail
 
 		// TODO: automatically flip sails between port and starboard
 
-		float mainsailSpeed = ThrustAmount * MainsailPercent;//Mathf.Clamp01(mainsailValue);
-		float foresailSpeed = ThrustAmount * ForesailPercent;//Mathf.Clamp01(mainsailValue);
+		float mainsailSpeed = ThrustAmount * mainsailPercent;
+		//Mathf.Clamp01(mainsailValue);
+		// float foresailSpeed = ThrustAmount * ForesailPercent;//Mathf.Clamp01(mainsailValue);
 
 		// boatRb.AddForceAtPosition(transform.forward * foresailSpeed * FrontRearForceRatio, transform.TransformPoint(FrontForcePoint), ForceMode.Force);
 		// boatRb.AddForceAtPosition(Rudder.transform.forward * mainsailSpeed * (1f - FrontRearForceRatio), transform.TransformPoint(RearForcePoint), ForceMode.Force);
-		boatRb.AddRelativeForce(Vector3.forward * windMagnitude * (foresailSpeed * FrontRearForceRatio + mainsailSpeed * (1f - FrontRearForceRatio)), ForceMode.Force);
+		// boatRb.AddRelativeForce(Vector3.forward * windMagnitude * (foresailSpeed * FrontRearForceRatio + mainsailSpeed * (1f - FrontRearForceRatio)), ForceMode.Force);
+		boatRb.AddRelativeForce(Vector3.forward * windMagnitude * mainsailSpeed, ForceMode.Force);
 
 		boatRb.AddRelativeTorque(new Vector3(0, rudderBuffer * TurnAngularForce, 0), ForceMode.Force);
 
@@ -193,7 +203,15 @@ public class SailboatScript : MonoBehaviour {
 		}
 
 		WindDirEvent.Invoke(new Vector3(0, 0, -boatWindAngle));
-		WindMagnitudeEvent.Invoke(windMagnitude.ToString("0.00"));
+		WindMagnitudeEvent.Invoke($"{windMagnitude.ToString("0.00")}, {mainsailPercent.ToString("0.00")}");
+
+		if (noGravitySources && lastGravitySource != null) {
+			Vector3 delta = transform.position - lastGravitySource.position;
+			Vector3 gravityDir = delta.normalized;
+			float gravityPercent = GravityDropoff.Evaluate(delta.sqrMagnitude / GravityMaxDistanceSqr);
+			boatRb.AddForce(gravityDir * GravityAmount * gravityPercent, ForceMode.Acceleration); // gravity
+		}
+		noGravitySources = true;
 	}
 
 	private void OnTriggerEnter(Collider other) {
@@ -206,6 +224,8 @@ public class SailboatScript : MonoBehaviour {
 
 		// NOTE: cannot have different gravity per source
 		if (other.CompareTag("GravitySource")) {
+			lastGravitySource = other.transform;
+			noGravitySources = false;
 			Vector3 delta = transform.position - other.transform.position;
 			Vector3 gravityDir = delta.normalized;
 			float gravityPercent = GravityDropoff.Evaluate(delta.sqrMagnitude / GravityMaxDistanceSqr);
