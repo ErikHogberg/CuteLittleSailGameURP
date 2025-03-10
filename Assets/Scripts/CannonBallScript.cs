@@ -19,7 +19,7 @@ public class CannonBallScript : MonoBehaviour {
 		WindDir = windDir;
 		if (!ballRb)
 			ballRb = GetComponent<Rigidbody>();
-		ballRb.velocity = velocity;
+		ballRb.linearVelocity = velocity;
 		// IDEA: ball spin. randomized?
 		// IDEA: change texture to something that makes rotation noticable
 	}

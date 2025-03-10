@@ -6,7 +6,8 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class SailboatScript : MonoBehaviour {
+public class SailboatScript : MonoBehaviour
+{
 
 	public float GravityAmount = 9.81f;
 	public AnimationCurve GravityDropoff;
@@ -101,7 +102,8 @@ public class SailboatScript : MonoBehaviour {
 	Vector3 initPos;
 	Transform lastGravitySource = null;
 
-	void Start() {
+	void Start()
+	{
 		if (!Cam) Cam = Camera.main;
 		foresailRot = Foresail.transform.localRotation;
 		boatRb = GetComponent<Rigidbody>();
@@ -118,20 +120,23 @@ public class SailboatScript : MonoBehaviour {
 			initPos = transform.position;
 	}
 
-	void Update() {
+	void Update()
+	{
 
 		// IDEA: option to set rudder using mouse, always angling to steer towards projected mouse position on plane
 		rudderBuffer = Mathf.MoveTowards(rudderBuffer, rudderValue, RudderSpeed * Time.deltaTime);
 
 		// mainsailBuffer = Mathf.MoveTowards(mainsailBuffer, mainsail, MainsailBufferSpeed * Time.deltaTime);
-		if (Mathf.Abs(mainsailValue) > 0) {
+		if (Mathf.Abs(mainsailValue) > 0)
+		{
 			mainsailBuffer += mainsailValue * MainsailBufferSpeed * Time.deltaTime;
 			mainsailBuffer = Mathf.Clamp01(mainsailBuffer);
 			MainsailEvent.Invoke(mainsailBuffer);
 		}
 
 		// foresailBuffer = Mathf.MoveTowards(foresailBuffer, foresail, ForesailBufferSpeed * Time.deltaTime);
-		if (Mathf.Abs(foresailValue) > 0) {
+		if (Mathf.Abs(foresailValue) > 0)
+		{
 			foresailBuffer += foresailValue * ForesailBufferSpeed * Time.deltaTime;
 			foresailBuffer = Mathf.Clamp01(foresailBuffer);
 			ForesailEvent.Invoke(foresailBuffer);
@@ -142,7 +147,8 @@ public class SailboatScript : MonoBehaviour {
 		Foresail.transform.localRotation = Quaternion.AngleAxis(foresailBuffer * ForesailAngleMul, foresailRot * Vector3.forward) * foresailRot;
 
 
-		if (Mathf.Abs(turnCannonValue) > 0) {
+		if (Mathf.Abs(turnCannonValue) > 0)
+		{
 			turnCannonBuffer += turnCannonValue * CannonBufferSpeed * Time.deltaTime;
 			turnCannonBuffer = Mathf.Clamp(turnCannonBuffer, -1, 1);
 			TurnCannonEvent.Invoke(turnCannonBuffer);
@@ -155,30 +161,43 @@ public class SailboatScript : MonoBehaviour {
 
 	bool pointerDown = false;
 
-	private void FixedUpdate() {
+	private void FixedUpdate()
+	{
 
-		if (UsePointer) {
-			if (Pointer.current != null) {
+		if (UsePointer)
+		{
+			if (Pointer.current != null)
+			{
 				bool steerToPointer = false;
-				if (Pointer.current.IsPressed()) {
-					if (pointerDown) {
+				if (Pointer.current.IsPressed())
+				{
+					if (pointerDown)
+					{
 						steerToPointer = true;
 						// Debug.Log("pressed pointer");
-					} else {
+					}
+					else
+					{
 						if (EventSystem.current != null
-						&& !EventSystem.current.IsPointerOverGameObject()) {
+						&& !EventSystem.current.IsPointerOverGameObject())
+						{
 							pointerDown = true;
 							steerToPointer = true;
-						} else {
+						}
+						else
+						{
 							// Debug.Log("pointer hit ui");
 
 						}
 					}
-				} else {
+				}
+				else
+				{
 					pointerDown = false;
 				}
 
-				if (steerToPointer) {
+				if (steerToPointer)
+				{
 					// Debug.Log("steer to pointer true");
 					Vector2 pointerPos = Pointer.current.position.ReadValue();
 					Ray mousePickRay = Cam.ScreenPointToRay(Pointer.current.position.ReadValue());
@@ -186,7 +205,8 @@ public class SailboatScript : MonoBehaviour {
 					Vector3 mouseDir = Cam.transform.forward;
 
 					Plane boatPlane = new Plane(transform.up, transform.position);
-					if (boatPlane.Raycast(mousePickRay, out float enter)) {
+					if (boatPlane.Raycast(mousePickRay, out float enter))
+					{
 						Vector3 planePos = mousePickRay.GetPoint(enter);
 						float angle = Vector3.SignedAngle(transform.forward, planePos - transform.position, transform.up);
 						rudderValue = Mathf.Abs(angle) / RudderMaxPointerAngle * Mathf.Sign(angle);
@@ -197,7 +217,8 @@ public class SailboatScript : MonoBehaviour {
 			}
 		}
 
-		if (SailsOn) {
+		if (SailsOn)
+		{
 
 
 			// thrust
@@ -211,11 +232,15 @@ public class SailboatScript : MonoBehaviour {
 			// TODO: account for mainsail angle
 			float mainsailWindAngle = boatWindAngle - mainsailBuffer * MainsailAngleMul;
 			float mainsailWindAngleAbs = Mathf.Abs(mainsailWindAngle);
-			if (mainsailWindAngleAbs < 180f - NoGoAngleThreshold) {
-				if (mainsailWindAngleAbs < 90f) {
+			if (mainsailWindAngleAbs < 180f - NoGoAngleThreshold)
+			{
+				if (mainsailWindAngleAbs < 90f)
+				{
 					// mainsailPercent = MainsailReachingCurve.Evaluate((mainsailWindAngleAbs - 90f) / 90f);
 					mainsailPercent = MainsailReachingCurve.Evaluate(mainsailWindAngleAbs / 90f);
-				} else {
+				}
+				else
+				{
 					// mainsailPercent = MainsailBeatingCurve.Evaluate((mainsailWindAngleAbs - NoGoAngleThreshold) / (90f - NoGoAngleThreshold));
 					mainsailPercent = MainsailBeatingCurve.Evaluate(1f - ((mainsailWindAngleAbs - 90f) / (90f - NoGoAngleThreshold)));
 				}
@@ -247,15 +272,17 @@ public class SailboatScript : MonoBehaviour {
 
 			boatRb.AddRelativeTorque(new Vector3(0, rudderBuffer * TurnAngularForce, 0), ForceMode.Force);
 
-			if (boatRb.velocity.sqrMagnitude > VelocityCap * VelocityCap) {
-				boatRb.velocity = boatRb.velocity.normalized * VelocityCap;
+			if (boatRb.linearVelocity.sqrMagnitude > VelocityCap * VelocityCap)
+			{
+				boatRb.linearVelocity = boatRb.linearVelocity.normalized * VelocityCap;
 			}
 
 			WindDirEvent.Invoke(new Vector3(0, 0, -boatWindAngle));
 			WindMagnitudeEvent.Invoke($"{windMagnitude.ToString("0.00")}, {mainsailPercent.ToString("0.00")}");
 		}
 
-		if (noGravitySources && lastGravitySource != null) {
+		if (noGravitySources && lastGravitySource != null)
+		{
 			Vector3 delta = transform.position - lastGravitySource.position;
 			Vector3 gravityDir = delta.normalized;
 			float gravityPercent = GravityDropoff.Evaluate(delta.sqrMagnitude / GravityMaxDistanceSqr);
@@ -264,81 +291,100 @@ public class SailboatScript : MonoBehaviour {
 		noGravitySources = true;
 	}
 
-	private void OnTriggerEnter(Collider other) {
-		if (other.CompareTag("WindZone") && other.TryGetComponent<WindZoneScript>(out WindZoneScript windZone)) {
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("WindZone") && other.TryGetComponent<WindZoneScript>(out WindZoneScript windZone))
+		{
 			WindDir = windZone.WindDir;
 		}
 	}
 
-	private void OnTriggerStay(Collider other) {
+	private void OnTriggerStay(Collider other)
+	{
 
 		// NOTE: cannot have different gravity per source
-		if (other.CompareTag("GravitySource")) {
-			lastGravitySource = other.transform;
-			noGravitySources = false;
-			Vector3 delta = transform.position - other.transform.position;
-			Vector3 gravityDir = delta.normalized;
-			float gravityPercent = GravityDropoff.Evaluate(delta.sqrMagnitude / GravityMaxDistanceSqr);
-			boatRb.AddForce(gravityDir * GravityAmount * gravityPercent, ForceMode.Acceleration); // gravity
+		if (!boatRb || !other.CompareTag("GravitySource"))
+		{
+			return;
 		}
+		lastGravitySource = other.transform;
+		noGravitySources = false;
+		Vector3 delta = transform.position - other.transform.position;
+		Vector3 gravityDir = delta.normalized;
+		float gravityPercent = GravityDropoff.Evaluate(delta.sqrMagnitude / GravityMaxDistanceSqr);
+		boatRb.AddForce(gravityDir * GravityAmount * gravityPercent, ForceMode.Acceleration); // gravity
 	}
 
-	private void OnCollisionEnter(Collision other) {
+	private void OnCollisionEnter(Collision other)
+	{
 		// TODO: lose when hit by enemy cannonball
 		// TODO: decide what happens on "game over" for a player
 	}
 
-	public void OnRudder(InputValue value) {
+	public void OnRudder(InputValue value)
+	{
 		rudderValue = value.Get<float>();
 		RudderEvent.Invoke(rudderValue);
 	}
 
-	public void OnMainsail(InputValue value) {
+	public void OnMainsail(InputValue value)
+	{
 		mainsailValue = value.Get<float>();
 		// MainsailEvent.Invoke(mainsailValue);
 	}
 
-	public void OnForesail(InputValue value) {
+	public void OnForesail(InputValue value)
+	{
 		foresailValue = value.Get<float>();
 		// ForesailEvent.Invoke(foresailValue);
 	}
 
-	public void OnTurnCannon(InputValue value) {
+	public void OnTurnCannon(InputValue value)
+	{
 		turnCannonValue = value.Get<float>();
 		// TurnCannonEvent.Invoke(turnCannonValue);
 	}
 
-	public void OnFire(InputValue value) {
+	public void OnFire(InputValue value)
+	{
 		if (value.Get<float>() > 0f)
 			Fire();
 	}
 
-	public void OnResetPress(InputValue value) {
+	public void OnResetPress(InputValue value)
+	{
 		if (value.Get<float>() > 0f)
 			ResetPress();
 	}
 
-	public void OnToggleSails(InputValue value) {
+	public void OnToggleSails(InputValue value)
+	{
 		if (value.Get<float>() > 0f)
 			SailsOn = !SailsOn;
 	}
 
-	public void SetRudder(float value) {
+	public void SetRudder(float value)
+	{
 		rudderValue = value;
 	}
-	public void SetMainsail(float value) {
+	public void SetMainsail(float value)
+	{
 		mainsailBuffer = value;
 	}
-	public void SetForesail(float value) {
+	public void SetForesail(float value)
+	{
 		foresailBuffer = value;
 	}
-	public void SetTurnCannon(float value) {
+	public void SetTurnCannon(float value)
+	{
 		turnCannonBuffer = value;
 	}
 
-	public void Fire() {
+	public void Fire()
+	{
 
-		if (!Cannon || !CannonBallObject || !CannonBallSpawnPoint) {
+		if (!Cannon || !CannonBallObject || !CannonBallSpawnPoint)
+		{
 			Debug.LogWarning("Cannon object(s) missing");
 			return;
 		}
@@ -347,16 +393,20 @@ public class SailboatScript : MonoBehaviour {
 		// FIXME: cannonballs not spawning at spawnpoint under some conditions
 		GameObject cannonBall = Instantiate(CannonBallObject, CannonBallSpawnPoint.transform.position, Cannon.transform.rotation, transform.parent);
 		cannonBall.transform.position = CannonBallSpawnPoint.transform.position;
-		if (cannonBall.TryGetComponent<CannonBallScript>(out CannonBallScript cannonBallScript)) {
+		if (cannonBall.TryGetComponent<CannonBallScript>(out CannonBallScript cannonBallScript))
+		{
 			cannonBallScript.SetInit(WindDir, Cannon.transform.forward * CannonBallVelocity);
-		} else {
+		}
+		else
+		{
 			Debug.LogWarning("Spawned object is not a cannonball");
 		}
 
 	}
 
-	public void ResetPress() {
-		boatRb.velocity = Vector3.zero;
+	public void ResetPress()
+	{
+		boatRb.linearVelocity = Vector3.zero;
 		if (ResetObject)
 			transform.position = initPos + ResetObject.transform.position;
 		else
