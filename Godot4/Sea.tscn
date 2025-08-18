@@ -1,3 +1,15 @@
-[gd_scene format=3 uid="uid://s2b51suchkx8"]
+[gd_scene load_steps=3 format=3 uid="uid://s2b51suchkx8"]
+
+[ext_resource type="PackedScene" uid="uid://dai5cqtrr67rn" path="res://GFX/sloop.tscn" id="1_1divg"]
+[ext_resource type="PackedScene" uid="uid://u72vgi7a15wx" path="res://GFX/planet_sketchfab.fbx" id="1_h8u8s"]
 
 [node name="Node3D" type="Node3D"]
+
+[node name="Sloop" parent="." instance=ExtResource("1_1divg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14987911, 0.54695606, -0.14710824)
+
+[node name="planet_sketchfab" parent="." instance=ExtResource("1_h8u8s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1071384, 0, -0.858666)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8553771, -0.28019613, 0.43568364, -0.3036948, 0.41010574, 0.85999, -0.4196422, -0.8679306, 0.2657009, 9.321079, 10.228717, -2.3841858e-07)
