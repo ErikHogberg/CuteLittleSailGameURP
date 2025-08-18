@@ -1,7 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://s2b51suchkx8"]
+[gd_scene load_steps=5 format=3 uid="uid://s2b51suchkx8"]
 
 [ext_resource type="PackedScene" uid="uid://dai5cqtrr67rn" path="res://GFX/sloop.tscn" id="1_1divg"]
 [ext_resource type="PackedScene" uid="uid://u72vgi7a15wx" path="res://GFX/planet_sketchfab.fbx" id="1_h8u8s"]
+
+[sub_resource type="Environment" id="Environment_1divg"]
+background_mode = 1
+background_color = Color(0.7223845, 0.88716257, 0.95546836, 1)
+ambient_light_color = Color(1, 1, 1, 1)
+reflected_light_source = 1
+glow_intensity = 0.09
+
+[sub_resource type="GDScript" id="GDScript_1divg"]
+script/source = "extends Camera3D
+
+@export var Target: Node3D
+"
 
 [node name="Node3D" type="Node3D"]
 
@@ -13,3 +26,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1071384, 0, -0.858666)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.8553771, -0.28019613, 0.43568364, -0.3036948, 0.41010574, 0.85999, -0.4196422, -0.8679306, 0.2657009, 9.321079, 10.228717, -2.3841858e-07)
+directional_shadow_mode = 0
+sky_mode = 1
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("Target")]
+transform = Transform3D(0.87966824, -0.18121609, 0.43970954, 0, 0.92456025, 0.381036, -0.4755878, -0.33518532, 0.8133063, 0.4889692, 0.7324284, 0.095493965)
+environment = SubResource("Environment_1divg")
+far = 200.25
+script = SubResource("GDScript_1divg")
+Target = NodePath("../Sloop")
