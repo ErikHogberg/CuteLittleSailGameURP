@@ -1,7 +1,173 @@
-[gd_scene load_steps=5 format=3 uid="uid://s2b51suchkx8"]
+[gd_scene load_steps=15 format=4 uid="uid://s2b51suchkx8"]
 
-[ext_resource type="PackedScene" uid="uid://dai5cqtrr67rn" path="res://GFX/sloop.tscn" id="1_1divg"]
 [ext_resource type="PackedScene" uid="uid://u72vgi7a15wx" path="res://GFX/planet_sketchfab.fbx" id="1_h8u8s"]
+
+[sub_resource type="GDScript" id="GDScript_ri7fr"]
+script/source = "extends Node3D
+
+@export var PitchPivot: Node3D
+@export var ForesailPivot: Node3D
+@export var MainsailPivot: Node3D
+
+@export var Speed: float = 1
+@export var YawSpeed: float =1
+@export var PitchSpeed: float =1
+
+func _physics_process(delta: float) -> void:
+	if Input.is_action_pressed(\"fw\"):
+		global_position += PitchPivot.global_basis.z * (Speed*delta)
+		
+	var vec = Input.get_vector(\"le\",\"ri\",\"dn\",\"up\")
+	PitchPivot.rotate_x(vec.y * -(PitchSpeed*delta))
+	rotate_y(vec.x * (YawSpeed*delta))
+"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5muwc"]
+resource_name = "Sail Boat Sail"
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.96495056, 0.8958633, 1)
+emission_enabled = true
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_gewsg"]
+_surfaces = [{
+"aabb": AABB(-0.023746949, -0.020020733, -0.00015000066, 0.020253126, 0.019999998, 0.00030000036),
+"format": 34359742465,
+"index_count": 72,
+"index_data": PackedByteArray("AAABAAIAAwACAAEAAAAEAAEAAQAEAAUABQAEAAAAAQAGAAMABQAGAAEABQADAAYABwACAAMAAAACAAcABQAIAAMAAwAIAAcAAAAJAAUABQAJAAgACQAAAAoACgAAAAcACQALAAgACgALAAkACwAMAAgACgAHAA0ACwAKAA0ADQAHAAgADQAMAAsACAAMAA0A"),
+"name": "Sail Boat Sail",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 14,
+"vertex_data": PackedByteArray("vItQvF9vfrwDSB059ojCvBTurbcoSR05bD6QvJF8Vrs6SR05bD6QvJF8VrtoSR251JOfvFg1Ebw9SR051JOfvFg1EbxmSR259ojCvBTurbd7SR25w+c7vJF8Vrs4SR05w+c7vJF8VrtqSR25vItQvF9vfrwsSB25n/hku4UCpLwpSR05n/hku4UCpLx6SR25WqWuuxTurbd/SR25WqWuuxTurbcjSR05")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_yhypk"]
+resource_name = "Plane_008"
+_surfaces = [{
+"aabb": AABB(-0.023746949, -0.020020733, -0.00015000066, 0.020253126, 0.019999998, 0.00030000036),
+"format": 34359742471,
+"index_count": 72,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAAACAAQABQAAAAQABQAEAAYABwAIAAkABwAKAAgABwALAAoACwAMAAoADAANAAoADgAPABAAEAARAA4AEgATABQAFAAVABIAFgAXABgAGAAZABYAGgAbABwAHAAdABoAHgAfACAAIAAhAB4AIgAjACQAJAAlACIAJgAnACgAKAApACYA"),
+"material": SubResource("StandardMaterial3D_5muwc"),
+"name": "Sail Boat Sail",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 42,
+"vertex_data": PackedByteArray("vItQvF9vfrwDSB059ojCvBTurbcoSR05bD6QvJF8Vrs6SR051JOfvFg1Ebw9SR05w+c7vJF8Vrs4SR05n/hku4UCpLwpSR05WqWuuxTurbcjSR051JOfvFg1EbxmSR25bD6QvJF8VrtoSR259ojCvBTurbd7SR25w+c7vJF8VrtqSR25vItQvF9vfrwsSB25n/hku4UCpLx6SR25WqWuuxTurbd/SR25vItQvF9vfrwsSB25vItQvF9vfrwDSB05n/hku4UCpLwpSR05n/hku4UCpLx6SR25n/hku4UCpLx6SR25n/hku4UCpLwpSR05WqWuuxTurbcjSR05WqWuuxTurbd/SR25bD6QvJF8VrtoSR25bD6QvJF8Vrs6SR059ojCvBTurbcoSR059ojCvBTurbd7SR251JOfvFg1EbxmSR259ojCvBTurbd7SR259ojCvBTurbcoSR051JOfvFg1Ebw9SR051JOfvFg1EbxmSR251JOfvFg1Ebw9SR05vItQvF9vfrwDSB05vItQvF9vfrwsSB25w+c7vJF8VrtqSR25WqWuuxTurbd/SR25WqWuuxTurbcjSR05w+c7vJF8Vrs4SR05bD6QvJF8VrtoSR25w+c7vJF8VrtqSR25w+c7vJF8Vrs4SR05bD6QvJF8Vrs6SR05/3//f/9/AID/f/9//38AgP9//3//fwCA/3//f/9/AID/f/9//38AgP9//3//fwCA/3//f/9/AIAAAAAA/38AgAAAAAD/fwCAAAAAAP9/AIAAAAAA/38AgAAAAAD/fwCAAAAAAP9/AIAAAAAA/38AgB1W4Sm0NRDSHVbhKbQ1ENIdVuEptDUQ0h1W4Sm0NRDSO/XCigR/VsU79cKKBH9WxTv1wooEf1bFO/XCigR/VsVSrKvTSzm50lKsq9NLObnSUqyr00s5udJSrKvTSzm50qopVVaebgDSqilVVp5uANKqKVVWnm4A0qopVVaebgDSZkCYP8tUVNVmQJg/y1RU1WZAmD/LVFTVZkCYP8tUVNWsU6vTSzlFraxTq9NLOUWtrFOr00s5Ra2sU6vTSzlFrf9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_gewsg")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_f4btm"]
+_surfaces = [{
+"aabb": AABB(-0.010253126, -0.01, -0.00015, 0.020253126, 0.02, 0.0003),
+"format": 34359742465,
+"index_count": 24,
+"index_data": PackedByteArray("AAABAAIAAAACAAMAAgABAAQABAABAAAABAADAAIAAwAFAAAAAAAFAAQABAAFAAMA"),
+"name": "Sail Boat Sail",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("hcIFPArXIzwRSB05CtcjPArXI7xRSR05uvwnvArXIzxRSR05uvwnvArXIzxSSR25CtcjPArXI7xRSR25hcIFPArXIzwdSB25")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_oil8b"]
+resource_name = "Plane_011"
+_surfaces = [{
+"aabb": AABB(-0.010253126, -0.01, -0.00015, 0.020253126, 0.02, 0.0003),
+"format": 34359742471,
+"index_count": 24,
+"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACAAJAAYACgALAAwADAANAAoADgAPABAAEAARAA4A"),
+"material": SubResource("StandardMaterial3D_5muwc"),
+"name": "Sail Boat Sail",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 18,
+"vertex_data": PackedByteArray("hcIFPArXIzwRSB05CtcjPArXI7xRSR05uvwnvArXIzxRSR05CtcjPArXI7xRSR25hcIFPArXIzwdSB25uvwnvArXIzxSSR25CtcjPArXI7xRSR25uvwnvArXIzxSSR25uvwnvArXIzxRSR05CtcjPArXI7xRSR05CtcjPArXI7xRSR25CtcjPArXI7xRSR05hcIFPArXIzwRSB05hcIFPArXIzwdSB25uvwnvArXIzxSSR25hcIFPArXIzwdSB25hcIFPArXIzwRSB05uvwnvArXIzxRSR05/3//f/9/AID/f/9//38AgP9//3//fwCA/v/+//9/AID+//7//38AgP7//v//fwCAZkCYP8tUVNVmQJg/y1RU1WZAmD/LVFTVZkCYP8tUVNU79cKKBH9WxTv1wooEf1bFO/XCigR/VsU79cKKBH9Wxf9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_f4btm")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_23vq5"]
+resource_name = "Sail Boat Wood"
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.7599932, 0.5448698, 0.43620482, 1)
+emission_enabled = true
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_45fd6"]
+_surfaces = [{
+"aabb": AABB(-0.004330127, -0.005, -0.035, 0.008660254, 0.01, 0.07),
+"format": 34359742465,
+"index_count": 60,
+"index_data": PackedByteArray("AAABAAIAAgADAAAABAABAAAABQACAAEAAQAEAAUABgACAAUABgADAAIABwAAAAMAAwAGAAcABAAAAAcACAAFAAQACQAHAAYABAAHAAkABAAKAAgABAAJAAoACwAFAAgACwAGAAUACwAIAAoABgALAAkACgAJAAsA"),
+"name": "Sail Boat Wood",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("veONOwrXIzspXA89AAAAAArXozspXA89AAAAAArXozspXA+9veONOwrXIzspXA+9veONuwjXIzspXA89veONuwjXIzspXA+9veONOwzXI7spXA+9veONOwzXI7spXA89veONuwjXI7spXA+9T07wrwrXo7spXA89veONuwjXI7spXA89T07wrwrXo7spXA+9")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fho8n"]
+resource_name = "Cylinder_169"
+_surfaces = [{
+"aabb": AABB(-0.004330127, -0.005, -0.035, 0.008660254, 0.01, 0.07),
+"format": 34359742471,
+"index_count": 60,
+"index_data": PackedByteArray("AAABAAIAAgADAAAABAAFAAYABgAHAAQACAAJAAoACgALAAgADAANAA4ADgAPAAwAEAARABIAEAATABEAEAASABQAEAAUABUAFgAXABgAGAAZABYAGgAbABwAHAAdABoAHgAfACAAHgAhAB8AIgAeACAAIgAgACMA"),
+"material": SubResource("StandardMaterial3D_23vq5"),
+"name": "Sail Boat Wood",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 36,
+"vertex_data": PackedByteArray("veONOwrXIzspXA89AAAAAArXozspXA89AAAAAArXozspXA+9veONOwrXIzspXA+9veONOwzXI7spXA89veONOwrXIzspXA89veONOwrXIzspXA+9veONOwzXI7spXA+9T07wrwrXo7spXA89veONOwzXI7spXA89veONOwzXI7spXA+9T07wrwrXo7spXA+9veONuwjXI7spXA89T07wrwrXo7spXA89T07wrwrXo7spXA+9veONuwjXI7spXA+9veONuwjXIzspXA89veONOwrXIzspXA89veONOwzXI7spXA89AAAAAArXozspXA89T07wrwrXo7spXA89veONuwjXI7spXA89veONuwjXIzspXA89veONuwjXI7spXA89veONuwjXI7spXA+9veONuwjXIzspXA+9AAAAAArXozspXA89veONuwjXIzspXA89veONuwjXIzspXA+9AAAAAArXozspXA+9veONOwzXI7spXA+9AAAAAArXozspXA+9veONuwjXIzspXA+9veONOwrXIzspXA+9T07wrwrXo7spXA+9veONuwjXI7spXA+92a4l0QE9VdPZriXRAT1V09muJdEBPVXT2a4l0QE9VdP+//9//3//v/7//3//f/+//v//f/9//7/+//9//3//v9mu2S4BPais2a7ZLgE9qKzZrtkuAT2orNmu2S4BPaisJVHZLgE9VdMlUdkuAT1V0yVR2S4BPVXTJVHZLgE9VdP/f/9//38AgP9//3//fwCA/3//f/9/AID/f/9//38AgP9//3//fwCA/3//f/9/AIAAAP9//3//vwAA/3//f/+/AAD/f/9//78AAP9//3//vyVRJdEBPaisJVEl0QE9qKwlUSXRAT2orCVRJdEBPais///+//9/AID///7//38AgP///v//fwCA///+//9/AID///7//38AgP///v//fwCA")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_45fd6")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_31qco"]
+_surfaces = [{
+"aabb": AABB(-0.024997262, -0.010000002, -0.06, 0.049994525, 0.020000001, 0.12),
+"format": 34359742465,
+"index_count": 276,
+"index_data": PackedByteArray("BgACAB4AAgACAAYAAgACAAYABgAGAAIABgAGAAIABgAGAAYABgAGAAYAHgAfAAYABAACAAYABwAfAB4ABgAfACAAIAAfAAcAGAAEAAYABAAAAAIAAAAEABgAAgACAAAAAgACAAAAHgACAAAAAAAAAAIAAAAAAAIAAAAhAB4AHgAhAAEAAAAAAAAAAAAAAAAAAQADAB4AHgADAAcAAQABAAMAAwADAAcAAwADAAEABwAHAAMABQADAAEABQAHAAMAAQAhACIAIgAhAAAACAAFAAEABwAFAAgAAQAJAAgAAQABAAsACwAJAAEAIgALAAEACQALAA8ADwALACIADAAIAAkACQANAAwADwANAAkACgAIAAwACAAKAAcAEQAMAA0ADAARAAoAEQANAA8ACgARABIAEgARAA8ABwAKAA4AEgAOAAoADgAHAAcABwAOACAAIAAOABIAEgAjACAAFAAjABIAIAAjABQAFAASAA8AFAATACAAIAATAAYABgATAAYAEwAUABUAFQAUAA8AFQAGABMAFgAGABUABgAWAAYABgAWABgAFQAXABYAFwAVAA8AGQAYABYAFgAXABkAGgAYABkAGwAZABcAGQAbABoAGwAXAA8AGAAaAAAAAAAaAAAAGgAbABwAHAAbAA8AHAAAABoAHQAcAA8ADwAkAB0AIgAkAA8AHQAkACIAHAAdABAAIgAQAB0AEAAAABwAAAAQACIAAAAQAAAA"),
+"lods": [0.009068303, PackedByteArray("AAABAAIAAQADAAIABAAAAAIABQADAAEABAACAAYAAgADAAcABQAHAAMABwAGAAIACAAFAAEABwAFAAgAAQAJAAgACAAKAAcACwAJAAEADAAIAAkACgAIAAwACQANAAwABwAKAA4ACQALAA8ADwANAAkAEAALAAEADwALABAAEAABAAAAEQAMAA0ADAARAAoAEQANAA8ACgARABIAEgAOAAoAEgARAA8ABwAOABMAEwAOABIAEwAGAAcAEwASABQAFAASAA8AEwAUABUAFQAGABMAFQAUAA8AFgAGABUAFQAXABYAFwAVAA8ABgAWABgAGAAEAAYAAAAEABgAGQAYABYAFgAXABkAGAAaAAAAGgAYABkAGwAZABcAGQAbABoAGwAXAA8AHAAAABoAGgAbABwAHAAbAA8AEAAAABwAHQAcAA8AHAAdABAAEAAdAA8A")],
+"name": "Sail Boat Wood",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 37,
+"vertex_data": PackedByteArray("veONvAjXI7wK1yM9veONvAjXI7wK1yO9AAAAAArXIzwK1yM9AAAAAArXIzwK1yO9DnTarwrXI7yPwnU9DnTarwrXI7yPwnW9veONPAzXI7wK1yM9veONPAzXI7wK1yO9DnTarwrXI7yNvWG9liZ0vAjXI7ybQhu9lCZ0PAzXI7ybQhu9lEtovAjXI7ysXiG94HXFL0hLE7u2Jim9vVYJvEFLE7vRW+W8k0toPAzXI7ysXiG9gKsCvEFLE7tyze68lEtovAjXI7ysXiE9v1YJPExLE7vRW+W8gasCPExLE7tyze68k0toPAzXI7ysXiE9gasCPEtLE7ueCAI9bKEfPEtLE7tb8QM9lCZ0PAzXI7ybQhs9v1YJPEtLE7uan/o8DnTarwrXI7yNvWE94HXFL0dLE7ubyDM9liZ0vAjXI7ybQhs9vVYJvEBLE7uan/o8aqEfvEBLE7tb8QM9gKsCvEBLE7ueCAI9AAAAAArXIzwAAAAAD8fMPAzXI7wAAAAAYxayPAzXI7wAAAAAD8fMvAjXI7wAAAAAYxayvAjXI7wAAAAAtFpIPExLE7tUHqo6tFpIvD9LE7tUHqo6")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cnrfg"]
+resource_name = "Cylinder_168"
+_surfaces = [{
+"aabb": AABB(-0.024997262, -0.010000002, -0.06, 0.049994525, 0.020000001, 0.12),
+"format": 34359742471,
+"index_count": 276,
+"index_data": PackedByteArray("BQAGAGYAZgBnAAUAaABoAGkAaABqAGgAaQBpAGgAaABrAGgAaQBpAGgAaABoAGkAaABoAGgAaABoAGgAaQBpAGwAaQBpAGwAbABsAGkAbABsAGkAbABtAGwAbABuAGwAbABsAGwAbABsAGwAbwACAAAAAABwAG8AcQBxAHIAcgByAHEAcQBxAHMAcwBzAHEAdAB1AAEAAQADAHQABAB2AHcAdwAHAAQACAAJAAoACgALAAgADAANAA4ADwAQABEAEgATABQAFQAWABcAGAAZAHgAeAB5ABgAGwB5AHgAeAAaABsAJAB6AHsAewAnACQAHwAmAHwAfAB9AB8AKAApACoAKgAoACgALQAtACsAKwAsAC0AfgAjACEAIQAiAH4AfwAlAIAAgACBAH8AggAcAB0AHQAeAIIAgwCEAIUAhQAgAIMALgAvADAALgAxAC8ALwAyADAANAAuADAANQA0ADAAMACGADUAMgAzADAAMwA2ADAAMwCHADYANgA3ADAANwA4ADAANwA5ADgAPAA6AIgAiACJADwAPgA/AEAAQABBAD4AZQCKAIsAiwBkAGUAQgBDAEQARABFAEIARgBHAEgASABJAEYASgBLAEwATABNAEoATgBPAFAAUABRAE4AUgBTAFQAVABVAFIAVgBXAFgAWABZAFYAWgBbAFwAXABdAFoAOwCMAI0AjQA9ADsAXgBfAGAAYABhAF4AYgBjAI4AjgCPAGIA"),
+"lods": [0.009068303, PackedByteArray("AAABAAIAAQADAAIABAAFAAYABgAHAAQACAAJAAoACgALAAgADAANAA4ADwAQABEAEgATABQAFQAWABcAGAAZABoAGgAbABgAGwAcAB0AHQAeABsAHwAeAB0AHQAgAB8AIQAiABgAGAAjACEAIQAjACQAJAAlACEAJgAkAB8AJgAnACQAKAApACoAKwAsAC0ALgAvADAALgAxAC8ALwAyADAAMgAzADAANAAuADAANQA0ADAAMwA2ADAANgA3ADAANwA4ADAANwA5ADgAOgA7ADwAOgA9ADsAPgA/AEAAQABBAD4AQgBDAEQARABFAEIARgBHAEgASABJAEYASgBLAEwATABNAEoATgBPAFAAUABRAE4AUgBTAFQAVABVAFIAVgBXAFgAWABZAFYAWgBbAFwAXABdAFoAXgBfAGAAYABhAF4AYgBjAGQAZABlAGIA")],
+"material": SubResource("StandardMaterial3D_23vq5"),
+"name": "Sail Boat Wood",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 144,
+"vertex_data": PackedByteArray("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")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_31qco")
+
+[sub_resource type="GDScript" id="GDScript_1divg"]
+script/source = "extends Node3D
+
+@export var Target: Node3D
+
+func _process(_delta: float) -> void:
+	global_position = Target.global_position
+"
 
 [sub_resource type="Environment" id="Environment_1divg"]
 background_mode = 1
@@ -10,16 +176,44 @@ ambient_light_color = Color(1, 1, 1, 1)
 reflected_light_source = 1
 glow_intensity = 0.09
 
-[sub_resource type="GDScript" id="GDScript_1divg"]
-script/source = "extends Camera3D
-
-@export var Target: Node3D
-"
-
 [node name="Node3D" type="Node3D"]
 
-[node name="Sloop" parent="." instance=ExtResource("1_1divg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14987911, 0.54695606, -0.14710824)
+[node name="Sloop" type="Node3D" parent="." node_paths=PackedStringArray("PitchPivot", "ForesailPivot", "MainsailPivot")]
+script = SubResource("GDScript_ri7fr")
+PitchPivot = NodePath("PitchParent")
+ForesailPivot = NodePath("PitchParent/Sloop/Front Sail Pivot")
+MainsailPivot = NodePath("PitchParent/Sloop/Rear Sail Pivot")
+
+[node name="PitchParent" type="Node3D" parent="Sloop"]
+
+[node name="Sloop" type="Node3D" parent="Sloop/PitchParent"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.02733922, 0)
+
+[node name="Front Sail Pivot" type="Node3D" parent="Sloop/PitchParent/Sloop"]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, -0.70710677, 0, 0.70710677, 0.70710677, 2.6887585e-09, 0.041488215, 0.009232221)
+
+[node name="Sail Front" type="MeshInstance3D" parent="Sloop/PitchParent/Sloop/Front Sail Pivot"]
+transform = Transform3D(1.7695518e-07, -4.8368145e-07, -2.9688153, -2.0992696, 2.0992699, -4.671407e-07, 2.09927, 2.0992694, -2.1688824e-07, 1.28084485e-08, -0.046382885, 0.04983093)
+mesh = SubResource("ArrayMesh_yhypk")
+skeleton = NodePath("")
+
+[node name="Rear Sail Pivot" type="Node3D" parent="Sloop/PitchParent/Sloop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.009999998, 0.012)
+
+[node name="Sail Rear" type="MeshInstance3D" parent="Sloop/PitchParent/Sloop/Rear Sail Pivot"]
+transform = Transform3D(1.769552e-07, -1.2977102e-07, 2.9688153, -2.9688156, -1.2977104e-07, 1.7695518e-07, 1.2977104e-07, -2.9688153, -1.2977105e-07, 2.2798776e-08, 0.003515441, 0.029420068)
+mesh = SubResource("ArrayMesh_oil8b")
+skeleton = NodePath("")
+
+[node name="Mast" type="MeshInstance3D" parent="Sloop/PitchParent/Sloop"]
+transform = Transform3D(0.6999999, 1.4901161e-08, 9.305007e-16, 0, -3.059797e-08, 1, 1.4901161e-08, -0.6999999, -4.371139e-08, 2.2649765e-08, 0.00982525, 0.011670353)
+mesh = SubResource("ArrayMesh_fho8n")
+skeleton = NodePath("")
+
+[node name="Boat" type="MeshInstance3D" parent="Sloop/PitchParent/Sloop"]
+transform = Transform3D(0.99999994, 8.742276e-08, 8.742276e-08, 8.742277e-08, -0.99999994, -8.742277e-08, 8.742276e-08, 8.7422784e-08, -0.9999998, 1.66893e-08, -0.026545217, 0.011670351)
+mesh = SubResource("ArrayMesh_cnrfg")
+skeleton = NodePath("")
 
 [node name="planet_sketchfab" parent="." instance=ExtResource("1_h8u8s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1071384, 0, -0.858666)
@@ -29,9 +223,12 @@ transform = Transform3D(0.8553771, -0.28019613, 0.43568364, -0.3036948, 0.410105
 directional_shadow_mode = 0
 sky_mode = 1
 
-[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("Target")]
-transform = Transform3D(0.87966824, -0.18121609, 0.43970954, 0, 0.92456025, 0.381036, -0.4755878, -0.33518532, 0.8133063, 0.4889692, 0.7324284, 0.095493965)
-environment = SubResource("Environment_1divg")
-far = 200.25
+[node name="Node3D" type="Node3D" parent="." node_paths=PackedStringArray("Target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14970292, 0.55019146, -0.16177054)
 script = SubResource("GDScript_1divg")
 Target = NodePath("../Sloop")
+
+[node name="Camera3D" type="Camera3D" parent="Node3D"]
+transform = Transform3D(0.87966824, -0.18121609, 0.43970954, 0, 0.92456025, 0.381036, -0.4755878, -0.33518532, 0.8133063, 0.22941755, 0.16399449, 0.26124233)
+environment = SubResource("Environment_1divg")
+far = 200.25
